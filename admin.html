@@ -1,0 +1,502 @@
+        <div class="mf"><label>Address</label><input id="sAddr" value="Markoot, Gurez, Jammu & Kashmir, India"/></div>
+        <div class="mfr">
+          <div class="mf"><label>Website URL</label><input id="sURL" value="https://trip-orbit.com"/></div>
+          <div class="mf"><label>Facebook URL</label><input id="sFB" value="https://www.facebook.com/share/1CKS7uAWqa/"/></div>
+        </div>
+        <div class="mf"><label>MakeMeTop Profile URL</label><input id="sMMT" value="https://makemetop.in/?biz=tGDVPqLP9WNMImsATMCc"/></div>
+        <button class="btn-gold" onclick="saveSettings()"><i class="fas fa-save"></i> Save Settings</button>
+      </div>
+      <div class="set-note">
+        <strong><i class="fas fa-info-circle"></i> Firebase Collections Used</strong><br/><br/>
+        <code>triporbit_tours</code> — Tour packages<br/>
+        <code>triporbit_cars</code> — Vehicle fleet<br/>
+        <code>triporbit_gallery</code> — Gallery images<br/>
+        <code>triporbit_enquiries</code> — Contact enquiries<br/>
+        <code>triporbit_settings</code> — Site settings<br/><br/>
+        <strong>Image URL Tips:</strong><br/>
+        • <strong>Unsplash:</strong> Open photo → Right-click image → "Copy Image Address" → paste here<br/>
+        • <strong>Google Drive:</strong> Upload → Share → Copy link → Replace <code>/file/d/ID/view</code> with <code>/uc?id=ID</code><br/>
+        • <strong>Cloudinary:</strong> Upload → copy the delivery URL directly<br/><br/>
+        <strong>Firestore Rules:</strong><br/>
+        <code>allow read: if true; allow write: if request.auth != null;</code>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<!-- Tour Modal -->
+<div class="mov" id="tourMov">
+  <div class="mbox">
+    <button class="mc" onclick="closeMov('tourMov')"><i class="fas fa-times"></i></button>
+    <h3 id="tourMTitle">Add Tour Package</h3>
+    <input type="hidden" id="tourId"/>
+    <div class="mfr">
+      <div class="mf"><label>Title *</label><input id="tourTitle" placeholder="e.g. Gurez Valley Expedition"/></div>
+      <div class="mf"><label>Category</label>
+        <select id="tourCat">
+          <option value="gurez">Gurez Valley</option>
+          <option value="kashmir">Kashmir</option>
+          <option value="honeymoon">Honeymoon</option>
+          <option value="adventure">Adventure</option>
+          <option value="family">Family</option>
+          <option value="group">Group</option>
+        </select>
+      </div>
+    </div>
+    <div class="mfr">
+      <div class="mf"><label>Duration</label><input id="tourDur" placeholder="4N/5D"/></div>
+      <div class="mf"><label>Group Size</label><input id="tourGrp" placeholder="Any / Couples / 4-12"/></div>
+    </div>
+    <div class="mfr">
+      <div class="mf"><label>Badge Style</label>
+        <select id="tourBadge">
+          <option value="">No badge</option>
+          <option value="badge-gold">Gold — Popular</option>
+          <option value="badge-royal">Royal Blue — Best Seller</option>
+          <option value="badge-green">Green — Adventure</option>
+        </select>
+      </div>
+      <div class="mf"><label>Badge Text</label><input id="tourBadgeTxt" placeholder="Popular / Best Seller"/></div>
+    </div>
+    <div class="mf">
+      <label>Image URL *</label>
+      <input id="tourImg" placeholder="https://images.unsplash.com/photo-...?w=600&q=85" oninput="prevImg('tourImg','tourImgP')"/>
+      <img id="tourImgP" class="img-prev" src="" alt="Preview"/>
+      <p class="img-hint">💡 Unsplash: open photo → right-click → Copy image address. Add <code>?w=600&q=85</code> at end.</p>
+    </div>
+    <div class="mf"><label>Description</label><textarea id="tourDesc" rows="3" placeholder="Brief tour description..."></textarea></div>
+    <div class="mf"><label>Includes (comma separated)</label><input id="tourInc" placeholder="Hotel Stay, Breakfast, AC Vehicle, Guide, Sightseeing"/></div>
+    <div class="mf"><label>Itinerary (one day per line)</label><textarea id="tourItin" rows="5" placeholder="Arrival Srinagar, drive to Gurez&#10;Habba Khatoon Peak viewpoint..."></textarea></div>
+    <div class="mf"><label>Display Order</label><input type="number" id="tourOrder" placeholder="1" min="1"/></div>
+    <div class="mfoot">
+      <button class="btn-cancel" onclick="closeMov('tourMov')">Cancel</button>
+      <button class="btn-gold" onclick="saveTour()"><i class="fas fa-save"></i> Save Package</button>
+    </div>
+  </div>
+</div>
+
+<!-- Car Modal -->
+<div class="mov" id="carMov">
+  <div class="mbox">
+    <button class="mc" onclick="closeMov('carMov')"><i class="fas fa-times"></i></button>
+    <h3 id="carMTitle">Add Vehicle</h3>
+    <input type="hidden" id="carId"/>
+    <div class="mfr">
+      <div class="mf"><label>Vehicle Name *</label><input id="carName" placeholder="Toyota Innova Crysta"/></div>
+      <div class="mf"><label>Subtitle / Type</label><input id="carSub" placeholder="Premium MPV"/></div>
+    </div>
+    <div class="mf">
+      <label>Image URL *</label>
+      <input id="carImg" placeholder="https://images.unsplash.com/photo-...?w=600&q=85" oninput="prevImg('carImg','carImgP')"/>
+      <img id="carImgP" class="img-prev" src="" alt="Preview"/>
+    </div>
+    <div class="mf"><label>Specs (comma separated)</label><input id="carSpecs" placeholder="7 Passengers, 4 Bags, AC + Heater, GPS, Local Driver"/></div>
+    <div class="mf"><label>Description</label><textarea id="carDesc" rows="3" placeholder="Vehicle description..."></textarea></div>
+    <div class="mfr">
+      <div class="mf"><label>Mark as Featured / Most Popular?</label>
+        <select id="carFeat"><option value="false">No</option><option value="true">Yes — Show badge</option></select>
+      </div>
+      <div class="mf"><label>Display Order</label><input type="number" id="carOrder" placeholder="1" min="1"/></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-cancel" onclick="closeMov('carMov')">Cancel</button>
+      <button class="btn-gold" onclick="saveCar()"><i class="fas fa-save"></i> Save Vehicle</button>
+    </div>
+  </div>
+</div>
+
+<!-- Gallery Modal -->
+<div class="mov" id="galMov">
+  <div class="mbox">
+    <button class="mc" onclick="closeMov('galMov')"><i class="fas fa-times"></i></button>
+    <h3 id="galMTitle">Add Gallery Image</h3>
+    <input type="hidden" id="galId"/>
+    <div class="mf">
+      <label>Image URL *</label>
+      <input id="galUrl" placeholder="https://images.unsplash.com/photo-...?w=800&q=85" oninput="prevImg('galUrl','galImgP')"/>
+      <img id="galImgP" class="img-prev" src="" alt="Preview"/>
+      <p class="img-hint">💡 <strong>Unsplash:</strong> search → open photo → right-click → "Copy image address"<br/>
+      💡 <strong>Google Drive:</strong> Upload file → Share → "Anyone with link" → copy ID from URL → use: <code>https://drive.google.com/uc?id=YOUR_FILE_ID</code><br/>
+      💡 <strong>Cloudinary:</strong> Upload to your account → copy the delivery URL</p>
+    </div>
+    <div class="mf"><label>Caption</label><input id="galCap" placeholder="e.g. Gurez Valley at Dawn"/></div>
+    <div class="mfr">
+      <div class="mf"><label>Category</label>
+        <select id="galCat">
+          <option value="gurez">Gurez Valley</option>
+          <option value="kashmir">Kashmir</option>
+          <option value="adventure">Adventure</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="mf"><label>Display Order</label><input type="number" id="galOrder" placeholder="1" min="1"/></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-cancel" onclick="closeMov('galMov')">Cancel</button>
+      <button class="btn-gold" onclick="saveGal()"><i class="fas fa-save"></i> Save Image</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Modal -->
+<div class="mov" id="viewMov">
+  <div class="mbox" style="max-width:520px">
+    <button class="mc" onclick="closeMov('viewMov')"><i class="fas fa-times"></i></button>
+    <h3>Record Details</h3>
+    <div id="viewBody" style="font-size:13px;color:var(--t2);line-height:2"></div>
+    <div class="mfoot"><button class="btn-cancel" onclick="closeMov('viewMov')">Close</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore,collection,addDoc,getDocs,doc,updateDoc,deleteDoc,query,orderBy,serverTimestamp,limit }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const fbCfg = {
+  apiKey:"AIzaSyADiBZe0V5gTnB89Ik1Bby2NDo-9nRxAHc",
+  authDomain:"insta-web-upload.firebaseapp.com",
+  databaseURL:"https://insta-web-upload-default-rtdb.firebaseio.com",
+  projectId:"insta-web-upload",
+  storageBucket:"insta-web-upload.firebasestorage.app",
+  messagingSenderId:"1092302887537",
+  appId:"1:1092302887537:web:a1bb7595868c84c30999d0"
+};
+const app  = initializeApp(fbCfg);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+
+// Collection names (prefixed to not conflict with other sites)
+const C = {
+  tours:'triporbit_tours', cars:'triporbit_cars',
+  gallery:'triporbit_gallery', enquiries:'triporbit_enquiries',
+  settings:'triporbit_settings'
+};
+
+// ── Toast ──────────────────────────────────────────────────────
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+type;
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── Auth ───────────────────────────────────────────────────────
+onAuthStateChanged(auth,user=>{
+  if(user){
+    document.getElementById('loginWrap').classList.add('out');
+    document.getElementById('adminEmail').textContent=user.email;
+    loadDash();
+  } else {
+    document.getElementById('loginWrap').classList.remove('out');
+  }
+});
+window.doLogin=async function(){
+  const btn=document.getElementById('loginBtn'),err=document.getElementById('loginErr');
+  const email=document.getElementById('lemail').value.trim(),pass=document.getElementById('lpass').value;
+  err.textContent=''; btn.textContent='Signing in...'; btn.disabled=true;
+  try{ await signInWithEmailAndPassword(auth,email,pass); }
+  catch(e){ err.textContent='Invalid email or password.'; btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In'; btn.disabled=false; }
+};
+document.getElementById('logoutBtn').addEventListener('click',()=>signOut(auth));
+
+// ── Nav ────────────────────────────────────────────────────────
+document.querySelectorAll('.ni').forEach(item=>{
+  item.addEventListener('click',()=>sw(item.dataset.sec));
+});
+window.sw=function(sec){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('on',n.dataset.sec===sec));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById('sec-'+sec)?.classList.add('on');
+  document.getElementById('pgTitle').textContent=
+    document.querySelector('.ni[data-sec="'+sec+'"]')?.textContent.trim()||sec;
+  loadSec(sec);
+};
+document.getElementById('togBtn').addEventListener('click',()=>{
+  const sb=document.getElementById('sidebar'),mn=document.getElementById('main');
+  if(window.innerWidth<=768){ sb.classList.toggle('mob'); }
+  else{ sb.classList.toggle('off'); mn.classList.toggle('full'); }
+});
+
+// ── Modals ─────────────────────────────────────────────────────
+window.closeMov=id=>document.getElementById(id).classList.remove('open');
+function openMov(id){document.getElementById(id).classList.add('open');}
+document.querySelectorAll('.mov').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.mov.open').forEach(m=>m.classList.remove('open'));
+});
+
+// ── Image Preview ──────────────────────────────────────────────
+window.prevImg=function(inputId,prevId){
+  const url=document.getElementById(inputId).value.trim();
+  const prev=document.getElementById(prevId);
+  if(url){ prev.src=url; prev.classList.add('show'); prev.onerror=()=>prev.classList.remove('show'); }
+  else prev.classList.remove('show');
+};
+
+// ── Helpers ────────────────────────────────────────────────────
+function v(id){return document.getElementById(id)?.value?.trim()||'';}
+function sv(id,val){const el=document.getElementById(id);if(el)el.value=val||'';}
+function clrFields(ids){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';})}
+function fmtDate(ts){if(!ts)return '';try{const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return '';}}
+
+// ── Section Router ─────────────────────────────────────────────
+function loadSec(sec){
+  const map={dashboard:loadDash,tours:loadTours,cars:loadCars,gallery:loadGallery,enquiries:loadEnquiries};
+  map[sec]?.();
+}
+
+// ── Dashboard ──────────────────────────────────────────────────
+async function loadDash(){
+  for(const [col,el] of [[C.tours,'cT'],[C.cars,'cC'],[C.gallery,'cG'],[C.enquiries,'cE']]){
+    try{ const s=await getDocs(collection(db,col));document.getElementById(el).textContent=s.size; }
+    catch{ document.getElementById(el).textContent='—'; }
+  }
+  // Recent enquiries
+  const de=document.getElementById('dE');
+  try{
+    const s=await getDocs(query(collection(db,C.enquiries),orderBy('createdAt','desc'),limit(6)));
+    de.innerHTML=s.empty?'<p style="font-size:12px;color:var(--t2)">No enquiries yet.</p>':
+      s.docs.map(d=>{const e=d.data();return`<div class="dr"><span style="font-weight:600">${e.name||'—'}</span><span style="color:var(--t2);font-size:11px">${e.tourType||'—'}</span><span class="bdg bdg-${e.status||'new'}">${e.status||'new'}</span></div>`;}).join('');
+  }catch{de.innerHTML='<p style="font-size:12px;color:var(--t2)">Connect Firestore to view.</p>';}
+  // Tour packages
+  const dt=document.getElementById('dT');
+  try{
+    const s=await getDocs(query(collection(db,C.tours),orderBy('order','asc'),limit(6)));
+    dt.innerHTML=s.empty?'<p style="font-size:12px;color:var(--t2)">No tours yet. Add your first!</p>':
+      s.docs.map(d=>{const t=d.data();return`<div class="dr"><span style="font-weight:600">${t.title||'—'}</span><span class="bdg bdg-${t.cat||'gurez'}">${t.cat||'gurez'}</span></div>`;}).join('');
+  }catch{dt.innerHTML='<p style="font-size:12px;color:var(--t2)">Connect Firestore to view.</p>';}
+}
+
+// ── Tours CRUD ─────────────────────────────────────────────────
+let tourCache=[];
+async function loadTours(){
+  const tb=document.getElementById('toursBody');
+  tb.innerHTML='<tr><td colspan="7" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr>';
+  try{const s=await getDocs(query(collection(db,C.tours),orderBy('order','asc')));tourCache=[];s.forEach(d=>tourCache.push({id:d.id,...d.data()}));}
+  catch{tourCache=[];}
+  document.getElementById('tourCnt').textContent='('+tourCache.length+')';
+  if(!tourCache.length){tb.innerHTML='<tr><td colspan="7" class="empty-row"><i class="fas fa-compass"></i>No tour packages yet.</td></tr>';return;}
+  tb.innerHTML=tourCache.map(t=>`<tr>
+    <td>${t.image?`<img src="${t.image}" class="thumb" onerror="this.style.display='none'" alt=""/>`:'—'}</td>
+    <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title||'—'}</td>
+    <td><span class="bdg bdg-${t.cat||'gurez'}">${t.cat||'—'}</span></td>
+    <td style="color:var(--t2)">${t.duration||'—'}</td>
+    <td style="color:var(--t2)">${t.groupSize||'—'}</td>
+    <td style="color:var(--t2)">${t.order||1}</td>
+    <td><div class="acts">
+      <button class="ab ab-e" onclick="openTourMod('${t.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+      <button class="ab ab-d" onclick="delRec('${C.tours}','${t.id}',loadTours)" title="Delete"><i class="fas fa-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+window.openTourMod=function(id){
+  clrFields(['tourId','tourTitle','tourDur','tourGrp','tourBadgeTxt','tourImg','tourDesc','tourInc','tourItin','tourOrder']);
+  document.getElementById('tourImgP').classList.remove('show');
+  if(id){
+    const t=tourCache.find(x=>x.id===id);if(!t)return;
+    sv('tourId',id);sv('tourTitle',t.title);sv('tourCat',t.cat);sv('tourDur',t.duration);
+    sv('tourGrp',t.groupSize);sv('tourBadge',t.badge||'');sv('tourBadgeTxt',t.badgeText||t.bdgText||'');
+    sv('tourImg',t.image);sv('tourDesc',t.desc||t.description);
+    sv('tourInc',(t.includes||[]).join(', '));sv('tourItin',(t.itinerary||[]).join('\n'));sv('tourOrder',t.order||1);
+    if(t.image){const p=document.getElementById('tourImgP');p.src=t.image;p.classList.add('show');}
+    document.getElementById('tourMTitle').textContent='Edit Tour Package';
+  } else { document.getElementById('tourMTitle').textContent='Add Tour Package'; }
+  openMov('tourMov');
+};
+window.saveTour=async function(){
+  if(!v('tourTitle')){toast('Tour title is required','err');return;}
+  const id=v('tourId');
+  const data={
+    title:v('tourTitle'),cat:v('tourCat'),duration:v('tourDur'),groupSize:v('tourGrp'),
+    badge:v('tourBadge'),badgeText:v('tourBadgeTxt'),image:v('tourImg'),
+    desc:v('tourDesc'),
+    includes:v('tourInc').split(',').map(s=>s.trim()).filter(Boolean),
+    itinerary:v('tourItin').split('\n').map(s=>s.trim()).filter(Boolean),
+    order:parseInt(v('tourOrder'))||1, updatedAt:serverTimestamp()
+  };
+  try{
+    if(id) await updateDoc(doc(db,C.tours,id),data);
+    else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.tours),data); }
+    toast(id?'Tour updated!':'Tour added!','ok'); closeMov('tourMov'); loadTours();
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+// ── Cars CRUD ──────────────────────────────────────────────────
+let carCache=[];
+async function loadCars(){
+  const tb=document.getElementById('carsBody');
+  tb.innerHTML='<tr><td colspan="6" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr>';
+  try{const s=await getDocs(query(collection(db,C.cars),orderBy('order','asc')));carCache=[];s.forEach(d=>carCache.push({id:d.id,...d.data()}));}
+  catch{carCache=[];}
+  document.getElementById('carCnt').textContent='('+carCache.length+')';
+  if(!carCache.length){tb.innerHTML='<tr><td colspan="6" class="empty-row"><i class="fas fa-car"></i>No vehicles yet.</td></tr>';return;}
+  tb.innerHTML=carCache.map(c=>`<tr>
+    <td>${c.image?`<img src="${c.image}" class="thumb" onerror="this.style.display='none'" alt=""/>`:'—'}</td>
+    <td style="font-weight:600">${c.name||'—'}</td>
+    <td style="color:var(--t2)">${c.sub||'—'}</td>
+    <td>${c.featured?'<span class="bdg bdg-confirmed">Yes</span>':'—'}</td>
+    <td style="color:var(--t2)">${c.order||1}</td>
+    <td><div class="acts">
+      <button class="ab ab-e" onclick="openCarMod('${c.id}')"><i class="fas fa-edit"></i></button>
+      <button class="ab ab-d" onclick="delRec('${C.cars}','${c.id}',loadCars)"><i class="fas fa-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+window.openCarMod=function(id){
+  clrFields(['carId','carName','carSub','carImg','carSpecs','carDesc','carOrder']);
+  document.getElementById('carImgP').classList.remove('show');
+  if(id){
+    const c=carCache.find(x=>x.id===id);if(!c)return;
+    sv('carId',id);sv('carName',c.name);sv('carSub',c.sub);sv('carImg',c.image);
+    sv('carSpecs',(c.specs||[]).join(', '));sv('carDesc',c.desc||c.description||'');
+    sv('carFeat',String(!!c.featured));sv('carOrder',c.order||1);
+    if(c.image){const p=document.getElementById('carImgP');p.src=c.image;p.classList.add('show');}
+    document.getElementById('carMTitle').textContent='Edit Vehicle';
+  } else { document.getElementById('carMTitle').textContent='Add Vehicle'; }
+  openMov('carMov');
+};
+window.saveCar=async function(){
+  if(!v('carName')){toast('Vehicle name required','err');return;}
+  const id=v('carId');
+  const data={
+    name:v('carName'),sub:v('carSub'),image:v('carImg'),
+    specs:v('carSpecs').split(',').map(s=>s.trim()).filter(Boolean),
+    desc:v('carDesc'),featured:v('carFeat')==='true',
+    order:parseInt(v('carOrder'))||1, updatedAt:serverTimestamp()
+  };
+  try{
+    if(id) await updateDoc(doc(db,C.cars,id),data);
+    else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.cars),data); }
+    toast('Vehicle saved!','ok'); closeMov('carMov'); loadCars();
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+// ── Gallery CRUD ───────────────────────────────────────────────
+let galCache=[];
+async function loadGallery(){
+  const grid=document.getElementById('galGrid');
+  grid.innerHTML='<p style="padding:18px;color:var(--t2);font-size:12px"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
+  try{const s=await getDocs(query(collection(db,C.gallery),orderBy('order','asc')));galCache=[];s.forEach(d=>galCache.push({id:d.id,...d.data()}));}
+  catch{galCache=[];}
+  document.getElementById('galCnt').textContent='('+galCache.length+')';
+  if(!galCache.length){grid.innerHTML='<p style="padding:18px;color:var(--t2);font-size:12px">No images yet. Click "Add Image" to get started.</p>';return;}
+  grid.innerHTML=galCache.map(img=>`
+    <div class="ag-item">
+      <img src="${img.url||''}" alt="${img.caption||''}" onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400'"/>
+      <div class="ag-acts">
+        <button class="ab ab-e" onclick="openGalMod('${img.id}')" title="Edit"><i class="fas fa-edit"></i></button>
+        <button class="ab ab-d" onclick="delRec('${C.gallery}','${img.id}',loadGallery)" title="Delete"><i class="fas fa-trash"></i></button>
+      </div>
+      <div class="ag-cap">${img.caption||'No caption'} [${img.cat||''}]</div>
+    </div>`).join('');
+}
+window.openGalMod=function(id){
+  clrFields(['galId','galUrl','galCap','galOrder']); document.getElementById('galImgP').classList.remove('show');
+  if(id){
+    const img=galCache.find(x=>x.id===id);if(!img)return;
+    sv('galId',id);sv('galUrl',img.url);sv('galCap',img.caption);sv('galCat',img.cat||'gurez');sv('galOrder',img.order||1);
+    if(img.url){const p=document.getElementById('galImgP');p.src=img.url;p.classList.add('show');}
+    document.getElementById('galMTitle').textContent='Edit Gallery Image';
+  } else { document.getElementById('galMTitle').textContent='Add Gallery Image'; }
+  openMov('galMov');
+};
+window.saveGal=async function(){
+  if(!v('galUrl')){toast('Image URL required','err');return;}
+  const id=v('galId');
+  const data={url:v('galUrl'),caption:v('galCap'),cat:v('galCat'),order:parseInt(v('galOrder'))||1,updatedAt:serverTimestamp()};
+  try{
+    if(id) await updateDoc(doc(db,C.gallery,id),data);
+    else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.gallery),data); }
+    toast('Image saved!','ok'); closeMov('galMov'); loadGallery();
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+
+// ── Enquiries ──────────────────────────────────────────────────
+let enqCache=[];
+async function loadEnquiries(){
+  const tb=document.getElementById('enqBody');
+  tb.innerHTML='<tr><td colspan="8" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr>';
+  try{const s=await getDocs(query(collection(db,C.enquiries),orderBy('createdAt','desc')));enqCache=[];s.forEach(d=>enqCache.push({id:d.id,...d.data()}));}
+  catch{enqCache=[];}
+  document.getElementById('enqCnt').textContent='('+enqCache.length+')';
+  renderEnq(enqCache);
+}
+function renderEnq(data){
+  const tb=document.getElementById('enqBody');
+  if(!data.length){tb.innerHTML='<tr><td colspan="8" class="empty-row"><i class="fas fa-envelope"></i>No enquiries yet.</td></tr>';return;}
+  tb.innerHTML=data.map(e=>`<tr>
+    <td style="font-weight:600">${e.name||'—'}</td>
+    <td><a href="tel:${e.phone}" style="color:var(--sky)">${e.phone||'—'}</a></td>
+    <td style="color:var(--t2);font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.email||'—'}</td>
+    <td style="font-size:12px">${e.tourType||e.package||'—'}</td>
+    <td style="color:var(--t2);white-space:nowrap">${e.travelDate||'—'}</td>
+    <td style="font-size:11px;color:var(--t2)">${e.source||'—'}</td>
+    <td><select class="ssel" onchange="updStatus('${C.enquiries}','${e.id}',this.value)">
+      <option value="new" ${e.status==='new'?'selected':''}>New</option>
+      <option value="contacted" ${e.status==='contacted'?'selected':''}>Contacted</option>
+      <option value="confirmed" ${e.status==='confirmed'?'selected':''}>Confirmed</option>
+      <option value="done" ${e.status==='done'?'selected':''}>Done</option>
+    </select></td>
+    <td><div class="acts">
+      <a class="ab ab-w" href="https://wa.me/${(e.phone||'').replace(/[^0-9]/g,'')}?text=Hi%20${encodeURIComponent(e.name||'')}!%20Thank%20you%20for%20enquiring%20about%20TripOrbit." target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      <button class="ab ab-v" onclick="viewRec(${JSON.stringify(e).replace(/'/g,'&apos;')})" title="View"><i class="fas fa-eye"></i></button>
+      <button class="ab ab-d" onclick="delRec('${C.enquiries}','${e.id}',loadEnquiries)" title="Delete"><i class="fas fa-trash"></i></button>
+    </div></td>
+  </tr>`).join('');
+}
+document.getElementById('enqSearch').addEventListener('input',function(){
+  const q=this.value.toLowerCase();
+  renderEnq(enqCache.filter(e=>`${e.name}${e.phone}${e.email}`.toLowerCase().includes(q)));
+});
+
+// ── Shared CRUD helpers ────────────────────────────────────────
+window.updStatus=async function(col,id,status){
+  try{ await updateDoc(doc(db,col,id),{status,updatedAt:serverTimestamp()}); toast('Status updated','ok'); }
+  catch(e){ toast('Error: '+e.message,'err'); }
+};
+window.delRec=async function(col,id,reload){
+  if(!confirm('Delete this record permanently? This cannot be undone.')) return;
+  try{ await deleteDoc(doc(db,col,id)); toast('Deleted','ok'); reload?.(); }
+  catch(e){ toast('Error: '+e.message,'err'); }
+};
+window.viewRec=function(rec){
+  const skip=['id'];
+  document.getElementById('viewBody').innerHTML='<table style="width:100%;border-collapse:collapse">'+
+    Object.entries(rec).filter(([k])=>!skip.includes(k)).map(([k,val])=>
+      `<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 0;font-weight:600;color:var(--text);width:130px;text-transform:capitalize;font-size:11px;letter-spacing:.5px">${k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase())}</td><td style="padding:6px 0;color:var(--t2)">${val?.toDate?val.toDate().toLocaleDateString('en-IN'):Array.isArray(val)?val.join(', '):(String(val||'—'))}</td></tr>`
+    ).join('')+'</table>';
+  openMov('viewMov');
+};
+
+// ── Settings ───────────────────────────────────────────────────
+window.saveSettings=async function(){
+  const data={
+    bizName:document.getElementById('sBiz').value.trim(),
+    phone:document.getElementById('sPhone').value.trim(),
+    email:document.getElementById('sEmail').value.trim(),
+    address:document.getElementById('sAddr').value.trim(),
+    website:document.getElementById('sURL').value.trim(),
+    facebook:document.getElementById('sFB').value.trim(),
+    makemetop:document.getElementById('sMMT').value.trim(),
+    updatedAt:serverTimestamp()
+  };
+  try{
+    const snap=await getDocs(collection(db,C.settings));
+    if(!snap.empty) await updateDoc(doc(db,C.settings,snap.docs[0].id),data);
+    else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.settings),data); }
+    toast('Settings saved!','ok');
+  }catch(e){toast('Error: '+e.message,'err');}
+};
+</script>
+</body>
+</html>
