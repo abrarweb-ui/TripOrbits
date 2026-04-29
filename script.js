@@ -13,12 +13,12 @@ var db = null;
 var fbReady = false;
 
 var FB_CFG = {
-  apiKey:            "AIzaSyADiBZe0V5gTnB89Ik1Bby2NDo-9nRxAHc",
-  authDomain:        "insta-web-upload.firebaseapp.com",
-  projectId:         "insta-web-upload",
-  storageBucket:     "insta-web-upload.firebasestorage.app",
-  messagingSenderId: "1092302887537",
-  appId:             "1:1092302887537:web:a1bb7595868c84c30999d0"
+   apiKey: "AIzaSyDtfrU0CjLtZJ_MAMinagfynegNL9eQYWQ",
+  authDomain: "trip-orbit.firebaseapp.com",
+  projectId: "trip-orbit",
+  storageBucket: "trip-orbit.firebasestorage.app",
+  messagingSenderId: "892020500031",
+  appId: "1:892020500031:web:dd67a5b7047405e87bfa8a"
 };
 
 // ── TOAST ─────────────────────────────────────────────────────
