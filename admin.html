@@ -1,49 +1,371 @@
-        <div class="mf"><label>Address</label><input id="sAddr" value="Markoot, Gurez, Jammu & Kashmir, India"/></div>
-        <div class="mfr">
-          <div class="mf"><label>Website URL</label><input id="sURL" value="https://trip-orbit.com"/></div>
-          <div class="mf"><label>Facebook URL</label><input id="sFB" value="https://www.facebook.com/share/1CKS7uAWqa/"/></div>
-        </div>
-        <div class="mf"><label>MakeMeTop Profile URL</label><input id="sMMT" value="https://makemetop.in/?biz=tGDVPqLP9WNMImsATMCc"/></div>
-        <button class="btn-gold" onclick="saveSettings()"><i class="fas fa-save"></i> Save Settings</button>
-      </div>
-      <div class="set-note">
-        <strong><i class="fas fa-info-circle"></i> Firebase Collections Used</strong><br/><br/>
-        <code>triporbit_tours</code> — Tour packages<br/>
-        <code>triporbit_cars</code> — Vehicle fleet<br/>
-        <code>triporbit_gallery</code> — Gallery images<br/>
-        <code>triporbit_enquiries</code> — Contact enquiries<br/>
-        <code>triporbit_settings</code> — Site settings<br/><br/>
-        <strong>Image URL Tips:</strong><br/>
-        • <strong>Unsplash:</strong> Open photo → Right-click image → "Copy Image Address" → paste here<br/>
-        • <strong>Google Drive:</strong> Upload → Share → Copy link → Replace <code>/file/d/ID/view</code> with <code>/uc?id=ID</code><br/>
-        • <strong>Cloudinary:</strong> Upload → copy the delivery URL directly<br/><br/>
-        <strong>Firestore Rules:</strong><br/>
-        <code>allow read: if true; allow write: if request.auth != null;</code>
-      </div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin Panel – TripOrbit</title>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" type="image/png" href="favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --royal:#1a3a6e;--royal-dark:#0f2347;--royal-mid:#1e4080;
+  --gold:#c9922a;--gold-light:#e8b84b;
+  --white:#fff;--bg:#f0f4f9;--mist:#eef2f7;
+  --red:#ef4444;--green:#22c55e;--sky:#3b82f6;--orange:#f59e0b;
+  --text:#111827;--t2:#4b5563;--t3:#9ca3af;
+  --r:12px;--sh:0 4px 20px rgba(26,58,110,.1);--shm:0 8px 32px rgba(26,58,110,.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;font-family:inherit}
+ul{list-style:none}
+input,select,textarea{font-family:inherit}
 
+/* ── LOADER ──────────────────────────────────── */
+#pageLoader{position:fixed;inset:0;z-index:9999;background:var(--royal-dark);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .6s,visibility .6s}
+#pageLoader.out{opacity:0;visibility:hidden;pointer-events:none}
+.loader-brand{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--white);letter-spacing:2px}
+.loader-brand span{color:var(--gold-light)}
+.loader-orbit{width:40px;height:40px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--gold-light);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LOGIN ───────────────────────────────────── */
+.login-wrap{position:fixed;inset:0;background:linear-gradient(135deg,var(--royal-dark),#1e4080);display:flex;align-items:center;justify-content:center;z-index:9990;transition:opacity .5s,visibility .5s}
+.login-wrap.out{opacity:0;visibility:hidden;pointer-events:none}
+.login-card{background:var(--white);border-radius:20px;padding:44px 38px;width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,.3);text-align:center}
+.login-logo{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:700;color:var(--royal)}
+.login-logo span{color:var(--gold)}
+.login-tag{font-size:11px;color:var(--t2);margin-bottom:26px;display:block}
+.lf{margin-bottom:14px;text-align:left}
+.lf label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t2);margin-bottom:5px}
+.lf input{width:100%;padding:11px 13px;border:1.5px solid #e2e8f0;border-radius:9px;font-size:14px;outline:none;transition:.25s;color:var(--text)}
+.lf input:focus{border-color:var(--royal);box-shadow:0 0 0 3px rgba(26,58,110,.1)}
+.login-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--royal),var(--royal-dark));color:var(--white);font-weight:700;font-size:14px;border-radius:99px;border:none;cursor:pointer;transition:.3s;margin-top:6px;font-family:'DM Sans',sans-serif}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(26,58,110,.4)}
+.login-err{color:var(--red);font-size:12px;margin-top:8px;min-height:16px}
+
+/* ── LAYOUT ──────────────────────────────────── */
+.admin-wrap{display:flex;min-height:100vh}
+.sidebar{width:250px;background:var(--royal-dark);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
+.sidebar.off{transform:translateX(-250px)}
+.sb-head{padding:20px 18px 14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--white)}
+.sb-logo span{color:var(--gold-light)}
+.sb-tag{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.sb-nav{flex:1;padding:8px 0;overflow-y:auto}
+.sec-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.28);padding:9px 16px 3px}
+.ni{display:flex;align-items:center;gap:9px;padding:10px 16px;font-size:12px;font-weight:600;color:rgba(255,255,255,.58);cursor:pointer;transition:.2s;border-left:3px solid transparent;user-select:none}
+.ni:hover{background:rgba(255,255,255,.06);color:#fff}
+.ni.on{background:rgba(255,255,255,.08);color:#fff;border-left-color:var(--gold-light)}
+.ni i{width:16px;font-size:13px;text-align:center;flex-shrink:0}
+.sb-foot{padding:13px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.logout-btn{display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;transition:.2s;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0}
+.logout-btn:hover{color:#fff}
+
+/* ── MAIN ────────────────────────────────────── */
+.main-area{margin-left:250px;flex:1;transition:margin .3s;min-height:100vh}
+.main-area.full{margin-left:0}
+.topbar{background:var(--white);padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh);position:sticky;top:0;z-index:50}
+.tb-left{display:flex;align-items:center;gap:9px}
+.tog-btn{width:32px;height:32px;border-radius:7px;background:var(--bg);border:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.2s;color:var(--text)}
+.tog-btn:hover{background:#dde3eb}
+.page-label{font-size:15px;font-weight:700;color:var(--text)}
+.tb-right{display:flex;align-items:center;gap:10px}
+.admin-badge{font-size:11px;font-weight:600;color:var(--sky);background:rgba(59,130,246,.1);padding:4px 11px;border-radius:99px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.site-link{font-size:12px;color:var(--t2);display:flex;align-items:center;gap:5px;transition:.2s}
+.site-link:hover{color:var(--gold)}
+.content{padding:20px}
+
+/* ── STAT CARDS ──────────────────────────────── */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.sc{background:var(--white);border-radius:var(--r);padding:16px;box-shadow:var(--sh);display:flex;align-items:center;gap:10px}
+.sc-ico{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.sc-num{display:block;font-size:24px;font-weight:700;color:var(--text);line-height:1}
+.sc-lbl{font-size:10px;color:var(--t2);text-transform:uppercase;letter-spacing:.5px}
+
+/* ── PANELS ──────────────────────────────────── */
+.panel{display:none}.panel.on{display:block}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:9px}
+.ph-title{font-size:17px;font-weight:700}
+.ph-title small{font-size:11px;font-weight:400;color:var(--t2);margin-left:5px}
+
+/* ── TABLE ───────────────────────────────────── */
+.tw{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);overflow-x:auto}
+.at{width:100%;border-collapse:collapse;font-size:13px;min-width:580px}
+.at th{background:#f8fafc;padding:10px 12px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t2);border-bottom:1px solid #e2e8f0;white-space:nowrap}
+.at td{padding:11px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+.at tr:last-child td{border:none}
+.at tr:hover td{background:#fafbfc}
+.tthumb{width:50px;height:36px;border-radius:6px;object-fit:cover;border:2px solid #e2e8f0}
+.empty-row{text-align:center;padding:36px;color:var(--t2);font-size:13px}
+.empty-row i{font-size:28px;display:block;margin-bottom:9px;color:#cbd5e1}
+.loading-row{text-align:center;padding:30px;color:var(--t2);font-size:12px}
+
+/* ── BADGES ──────────────────────────────────── */
+.bdg{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:3px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.4px}
+.bdg-new{background:rgba(59,130,246,.12);color:#1d4ed8}
+.bdg-contacted{background:rgba(245,158,11,.12);color:#92400e}
+.bdg-confirmed{background:rgba(34,197,94,.12);color:#166534}
+.bdg-done{background:rgba(34,197,94,.12);color:#166534}
+.bdg-gurez{background:rgba(26,58,110,.1);color:var(--royal)}
+.bdg-kashmir{background:rgba(245,158,11,.12);color:#92400e}
+.bdg-adventure{background:rgba(34,197,94,.12);color:#166534}
+.bdg-honeymoon{background:rgba(236,72,153,.12);color:#be185d}
+.bdg-family{background:rgba(59,130,246,.12);color:#1d4ed8}
+.bdg-group{background:rgba(139,92,246,.12);color:#6d28d9}
+
+/* ── ACTION BUTTONS ──────────────────────────── */
+.acts{display:flex;gap:5px;flex-wrap:wrap}
+.ab{width:27px;height:27px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:.2s}
+.ab-e{background:rgba(59,130,246,.1);color:var(--sky)}.ab-e:hover{background:var(--sky);color:#fff}
+.ab-d{background:rgba(239,68,68,.1);color:var(--red)}.ab-d:hover{background:var(--red);color:#fff}
+.ab-v{background:rgba(26,58,110,.08);color:var(--royal)}.ab-v:hover{background:var(--royal);color:#fff}
+.ab-w{background:rgba(37,211,102,.1);color:#25D366}.ab-w:hover{background:#25D366;color:#fff}
+
+/* ── BUTTONS ─────────────────────────────────── */
+.btn-add{display:inline-flex;align-items:center;gap:6px;background:var(--royal);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:99px;border:none;cursor:pointer;transition:.2s;font-family:'DM Sans',sans-serif;letter-spacing:.3px}
+.btn-add:hover{background:var(--royal-mid);transform:translateY(-1px)}
+.btn-save{background:linear-gradient(135deg,var(--gold),#a0751f);color:var(--royal-dark);font-size:12px;font-weight:700;padding:9px 20px;border-radius:99px;border:none;cursor:pointer;transition:.2s;font-family:'DM Sans',sans-serif}
+.btn-save:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(201,146,42,.4)}
+.btn-cancel{background:#f1f5f9;color:var(--t2);font-size:12px;font-weight:600;padding:9px 18px;border-radius:99px;border:none;cursor:pointer;transition:.2s;font-family:'DM Sans',sans-serif}
+.btn-cancel:hover{background:#e2e8f0}
+.btn-green{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:99px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* ── MODAL ───────────────────────────────────── */
+.mov{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.mov.open{display:flex}
+.mbox{background:var(--white);border-radius:16px;max-width:620px;width:100%;max-height:92vh;overflow-y:auto;padding:24px 28px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.22)}
+.mbox h3{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--text);margin-bottom:16px;font-weight:600}
+.mc{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;background:#f1f5f9;color:var(--t2);font-size:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.mc:hover{background:#e2e8f0;color:var(--text)}
+.mf{margin-bottom:12px}
+.mf label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--t2);margin-bottom:5px}
+.mf input,.mf select,.mf textarea{width:100%;padding:9px 12px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:.2s;color:var(--text);-webkit-appearance:none;background:var(--white)}
+.mf input:focus,.mf select:focus,.mf textarea:focus{border-color:var(--royal);box-shadow:0 0 0 3px rgba(26,58,110,.1)}
+.mf textarea{resize:vertical}
+.mfr{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.mfoot{display:flex;gap:9px;justify-content:flex-end;margin-top:16px;padding-top:13px;border-top:1px solid #f1f5f9}
+.img-prev{width:100%;height:130px;object-fit:cover;border-radius:8px;border:2px solid #e2e8f0;display:none;margin-top:7px}
+.img-prev.show{display:block}
+.img-hint{font-size:10px;color:var(--t3);margin-top:5px;line-height:1.65}
+
+/* ── GALLERY GRID (admin) ────────────────────── */
+.ag{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ag-item{position:relative;border-radius:9px;overflow:hidden;aspect-ratio:4/3;background:#e2e8f0}
+.ag-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.ag-item:hover img{transform:scale(1.06)}
+.ag-acts{position:absolute;inset:0;background:rgba(15,35,71,.7);display:none;flex-direction:column;align-items:center;justify-content:center;gap:7px}
+.ag-item:hover .ag-acts{display:flex}
+.ag-cap{position:absolute;bottom:0;left:0;right:0;background:rgba(15,35,71,.78);color:#fff;font-size:10px;padding:4px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── SEARCH ──────────────────────────────────── */
+.tsearch{padding:7px 13px 7px 34px;border:1.5px solid #e2e8f0;border-radius:99px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;background:#f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E") 9px 50%/14px no-repeat;width:210px;transition:.2s}
+.tsearch:focus{border-color:var(--royal);background-color:#fff}
+.ssel{border:1.5px solid #e2e8f0;border-radius:6px;padding:4px 8px;font-size:11px;font-family:'DM Sans',sans-serif;outline:none;background:#fff;cursor:pointer}
+
+/* ── TOAST ───────────────────────────────────── */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--royal-dark);color:#fff;padding:9px 22px;border-radius:99px;font-size:12px;font-weight:500;z-index:9999;opacity:0;pointer-events:none;transition:all .32s;box-shadow:var(--shm);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{background:#14532d}.toast.err{background:#7f1d1d}
+
+/* ── DASH ────────────────────────────────────── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}
+.dc{background:var(--white);border-radius:var(--r);padding:16px;box-shadow:var(--sh)}
+.dc h4{font-size:12px;font-weight:700;color:var(--text);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #f1f5f9;letter-spacing:.5px}
+.dr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f8fafc;font-size:12px}
+.dr:last-child{border:none}
+.qa{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.qa-btn{display:inline-flex;align-items:center;gap:5px;background:var(--white);border:1.5px solid #e2e8f0;color:var(--text);font-size:11px;font-weight:600;padding:6px 12px;border-radius:99px;cursor:pointer;transition:.2s;font-family:'DM Sans',sans-serif}
+.qa-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── SETTINGS ────────────────────────────────── */
+.set-card{background:var(--white);border-radius:var(--r);padding:24px;box-shadow:var(--sh);max-width:560px}
+.set-note{background:#fffbeb;border:1.5px solid #fde68a;border-radius:var(--r);padding:14px 16px;font-size:12px;color:#92400e;margin-top:16px;line-height:1.7}
+.set-note code{background:#fff;padding:2px 5px;border-radius:4px;font-size:11px;font-family:monospace}
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media(max-width:1024px){.stat-row{grid-template-columns:1fr 1fr}.ag{grid-template-columns:repeat(3,1fr)}.mfr{grid-template-columns:1fr}.dash-grid{grid-template-columns:1fr}}
+@media(max-width:768px){.sidebar{transform:translateX(-250px)}.sidebar.mob{transform:translateX(0)!important}.main-area{margin-left:0!important}.content{padding:12px}.mbox{padding:18px 16px}.stat-row{grid-template-columns:1fr 1fr}.ag{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.stat-row{grid-template-columns:1fr}.ag{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="pageLoader"><div class="loader-brand">Trip<span>Orbit</span></div><div class="loader-orbit"></div></div>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo">Trip<span>Orbit</span></div>
+    <span class="login-tag">Admin Panel — Authorised Access Only</span>
+    <div class="lf"><label>Email Address</label><input type="email" id="lemail" placeholder="admin@trip-orbit.com"/></div>
+    <div class="lf"><label>Password</label><input type="password" id="lpass" placeholder="••••••••"/></div>
+    <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+    <p class="login-err" id="loginErr"></p>
   </div>
 </div>
 
-<!-- MODALS -->
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="sb-logo">Trip<span>Orbit</span></div>
+    <div class="sb-tag">Admin Dashboard</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sec-label">Overview</div>
+    <div class="ni on" data-sec="dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</div>
+    <div class="sec-label">Content</div>
+    <div class="ni" data-sec="tours"><i class="fas fa-compass"></i>Tour Packages</div>
+    <div class="ni" data-sec="cars"><i class="fas fa-car"></i>Vehicles / Fleet</div>
+    <div class="ni" data-sec="gallery"><i class="fas fa-images"></i>Gallery Images</div>
+    <div class="sec-label">Leads</div>
+    <div class="ni" data-sec="enquiries"><i class="fas fa-envelope"></i>Enquiries</div>
+    <div class="sec-label">System</div>
+    <div class="ni" data-sec="settings"><i class="fas fa-cog"></i>Settings</div>
+  </nav>
+  <div class="sb-foot">
+    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
+  </div>
+</div>
 
-<!-- Tour Modal -->
+<!-- MAIN -->
+<div class="admin-wrap">
+<div class="main-area" id="mainArea">
+  <div class="topbar">
+    <div class="tb-left">
+      <button class="tog-btn" id="togBtn"><i class="fas fa-bars"></i></button>
+      <span class="page-label" id="pageLabel">Dashboard</span>
+    </div>
+    <div class="tb-right">
+      <span class="admin-badge" id="adminEmail">admin</span>
+      <a href="index.html" target="_blank" class="site-link"><i class="fas fa-external-link-alt"></i> View Site</a>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel on" id="sec-dashboard">
+      <div class="stat-row">
+        <div class="sc"><div class="sc-ico" style="background:rgba(26,58,110,.1)"><i class="fas fa-compass" style="color:var(--royal)"></i></div><div><span class="sc-num" id="cTours">—</span><span class="sc-lbl">Tours</span></div></div>
+        <div class="sc"><div class="sc-ico" style="background:rgba(201,146,42,.1)"><i class="fas fa-car" style="color:var(--gold)"></i></div><div><span class="sc-num" id="cCars">—</span><span class="sc-lbl">Vehicles</span></div></div>
+        <div class="sc"><div class="sc-ico" style="background:rgba(59,130,246,.1)"><i class="fas fa-images" style="color:var(--sky)"></i></div><div><span class="sc-num" id="cGal">—</span><span class="sc-lbl">Gallery</span></div></div>
+        <div class="sc"><div class="sc-ico" style="background:rgba(34,197,94,.1)"><i class="fas fa-envelope" style="color:var(--green)"></i></div><div><span class="sc-num" id="cEnq">—</span><span class="sc-lbl">Enquiries</span></div></div>
+      </div>
+      <div class="qa">
+        <button class="qa-btn" onclick="sw('tours')"><i class="fas fa-plus"></i> Add Tour</button>
+        <button class="qa-btn" onclick="sw('cars')"><i class="fas fa-car"></i> Add Vehicle</button>
+        <button class="qa-btn" onclick="sw('gallery')"><i class="fas fa-images"></i> Add Image</button>
+        <button class="qa-btn" onclick="sw('enquiries')"><i class="fas fa-envelope"></i> Enquiries</button>
+        <a href="index.html" target="_blank" class="qa-btn"><i class="fas fa-eye"></i> View Website</a>
+      </div>
+      <div class="dash-grid">
+        <div class="dc"><h4><i class="fas fa-envelope" style="color:var(--sky);margin-right:5px"></i>Recent Enquiries</h4><div id="dashEnq"><p style="font-size:12px;color:var(--t2)">Loading...</p></div></div>
+        <div class="dc"><h4><i class="fas fa-compass" style="color:var(--royal);margin-right:5px"></i>Tour Packages</h4><div id="dashTours"><p style="font-size:12px;color:var(--t2)">Loading...</p></div></div>
+      </div>
+    </div>
+
+    <!-- TOURS -->
+    <div class="panel" id="sec-tours">
+      <div class="ph">
+        <span class="ph-title">Tour Packages <small id="toursCnt"></small></span>
+        <button class="btn-add" onclick="openTourMod(null)"><i class="fas fa-plus"></i> Add Package</button>
+      </div>
+      <div class="tw">
+        <table class="at">
+          <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Duration</th><th>Group Size</th><th>Order</th><th>Actions</th></tr></thead>
+          <tbody id="toursBody"><tr><td colspan="7" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CARS -->
+    <div class="panel" id="sec-cars">
+      <div class="ph">
+        <span class="ph-title">Vehicles / Fleet <small id="carsCnt"></small></span>
+        <button class="btn-add" onclick="openCarMod(null)"><i class="fas fa-plus"></i> Add Vehicle</button>
+      </div>
+      <div class="tw">
+        <table class="at">
+          <thead><tr><th>Image</th><th>Name</th><th>Subtitle</th><th>Featured</th><th>Order</th><th>Actions</th></tr></thead>
+          <tbody id="carsBody"><tr><td colspan="6" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="panel" id="sec-gallery">
+      <div class="ph">
+        <span class="ph-title">Gallery Images <small id="galCnt"></small></span>
+        <button class="btn-add" onclick="openGalMod(null)"><i class="fas fa-plus"></i> Add Image</button>
+      </div>
+      <div style="background:var(--white);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);margin-bottom:14px;font-size:12px;color:var(--t2);line-height:1.7">
+        <strong style="color:var(--text)"><i class="fas fa-lightbulb" style="color:var(--gold);margin-right:5px"></i>How to add image URLs:</strong>
+        &nbsp;
+        <strong>Unsplash:</strong> open photo &rarr; right-click &rarr; "Copy image address" &nbsp;|&nbsp;
+        <strong>Google Drive:</strong> upload &rarr; share &rarr; copy ID from URL &rarr; use <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:11px">https://drive.google.com/uc?id=FILE_ID</code> &nbsp;|&nbsp;
+        <strong>Cloudinary:</strong> upload &rarr; copy delivery URL
+      </div>
+      <div class="ag" id="adminGalGrid"><p style="padding:18px;color:var(--t2);font-size:12px"><i class="fas fa-spinner fa-spin"></i> Loading...</p></div>
+    </div>
+
+    <!-- ENQUIRIES -->
+    <div class="panel" id="sec-enquiries">
+      <div class="ph">
+        <span class="ph-title">Enquiries <small id="enqCnt"></small></span>
+        <input class="tsearch" id="enqSearch" placeholder="Search name, phone..."/>
+      </div>
+      <div class="tw">
+        <table class="at">
+          <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Tour Type</th><th>Date</th><th>Source</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="enqBody"><tr><td colspan="8" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="panel" id="sec-settings">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:16px">Site Settings</h3>
+      <div class="set-card">
+        <div class="mf"><label>Business Name</label><input id="sBiz" value="TripOrbit"/></div>
+        <div class="mfr">
+          <div class="mf"><label>Phone / WhatsApp</label><input id="sPhone" value="+91 7889693186"/></div>
+          <div class="mf"><label>Email</label><input id="sEmail" value="triporbit1@gmail.com"/></div>
+        </div>
+        <div class="mf"><label>Address</label><input id="sAddr" value="Markoot, Gurez, Jammu &amp; Kashmir, India"/></div>
+        <div class="mfr">
+          <div class="mf"><label>Website</label><input id="sURL" value="https://trip-orbit.com"/></div>
+          <div class="mf"><label>Facebook URL</label><input id="sFB" value="https://www.facebook.com/share/1CKS7uAWqa/"/></div>
+        </div>
+        <div class="mf"><label>MakeMeTop URL</label><input id="sMMT" value="https://makemetop.in/?biz=tGDVPqLP9WNMImsATMCc"/></div>
+        <button class="btn-save" onclick="saveSettings()"><i class="fas fa-save"></i> Save Settings</button>
+      </div>
+      <div class="set-note">
+        <strong>Firebase Collections:</strong><br/>
+        <code>triporbit_tours</code> &bull; <code>triporbit_cars</code> &bull; <code>triporbit_gallery</code> &bull; <code>triporbit_enquiries</code> &bull; <code>triporbit_settings</code><br/><br/>
+        <strong>Firestore Rules:</strong> <code>allow read: if true; allow write: if request.auth != null;</code><br/><br/>
+        <strong>Setup:</strong> Firebase Console &rarr; Authentication &rarr; Email/Password &rarr; Add Users &rarr; use those credentials to login here.
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .main-area -->
+</div><!-- .admin-wrap -->
+
+<!-- TOUR MODAL -->
 <div class="mov" id="tourMov">
   <div class="mbox">
-    <button class="mc" onclick="closeMov('tourMov')"><i class="fas fa-times"></i></button>
+    <button class="mc" onclick="document.getElementById('tourMov').classList.remove('open')"><i class="fas fa-times"></i></button>
     <h3 id="tourMTitle">Add Tour Package</h3>
     <input type="hidden" id="tourId"/>
     <div class="mfr">
       <div class="mf"><label>Title *</label><input id="tourTitle" placeholder="e.g. Gurez Valley Expedition"/></div>
       <div class="mf"><label>Category</label>
-        <select id="tourCat">
-          <option value="gurez">Gurez Valley</option>
-          <option value="kashmir">Kashmir</option>
-          <option value="honeymoon">Honeymoon</option>
-          <option value="adventure">Adventure</option>
-          <option value="family">Family</option>
-          <option value="group">Group</option>
-        </select>
+        <select id="tourCat"><option value="gurez">Gurez Valley</option><option value="kashmir">Kashmir</option><option value="honeymoon">Honeymoon</option><option value="adventure">Adventure</option><option value="family">Family</option><option value="group">Group</option></select>
       </div>
     </div>
     <div class="mfr">
@@ -52,36 +374,31 @@
     </div>
     <div class="mfr">
       <div class="mf"><label>Badge Style</label>
-        <select id="tourBadge">
-          <option value="">No badge</option>
-          <option value="badge-gold">Gold — Popular</option>
-          <option value="badge-royal">Royal Blue — Best Seller</option>
-          <option value="badge-green">Green — Adventure</option>
-        </select>
+        <select id="tourBadge"><option value="">No badge</option><option value="badge-gold">Gold — Popular</option><option value="badge-royal">Blue — Best Seller</option><option value="badge-green">Green — Adventure</option></select>
       </div>
-      <div class="mf"><label>Badge Text</label><input id="tourBadgeTxt" placeholder="Popular / Best Seller"/></div>
+      <div class="mf"><label>Badge Text</label><input id="tourBadgeTxt" placeholder="Popular / Romantic"/></div>
     </div>
     <div class="mf">
       <label>Image URL *</label>
-      <input id="tourImg" placeholder="https://images.unsplash.com/photo-...?w=600&q=85" oninput="prevImg('tourImg','tourImgP')"/>
-      <img id="tourImgP" class="img-prev" src="" alt="Preview"/>
-      <p class="img-hint">💡 Unsplash: open photo → right-click → Copy image address. Add <code>?w=600&q=85</code> at end.</p>
+      <input id="tourImg" placeholder="https://images.unsplash.com/photo-...?w=600&q=85" oninput="previewImg('tourImg','tourImgPrev')"/>
+      <img id="tourImgPrev" class="img-prev" src="" alt=""/>
+      <p class="img-hint">Unsplash: open photo &rarr; right-click &rarr; "Copy image address" &rarr; paste here</p>
     </div>
     <div class="mf"><label>Description</label><textarea id="tourDesc" rows="3" placeholder="Brief tour description..."></textarea></div>
-    <div class="mf"><label>Includes (comma separated)</label><input id="tourInc" placeholder="Hotel Stay, Breakfast, AC Vehicle, Guide, Sightseeing"/></div>
-    <div class="mf"><label>Itinerary (one day per line)</label><textarea id="tourItin" rows="5" placeholder="Arrival Srinagar, drive to Gurez&#10;Habba Khatoon Peak viewpoint..."></textarea></div>
+    <div class="mf"><label>Includes (comma separated)</label><input id="tourInc" placeholder="Hotel Stay, Daily Meals, AC Vehicle, Guide"/></div>
+    <div class="mf"><label>Itinerary (one day per line)</label><textarea id="tourItin" rows="5" placeholder="Arrival Srinagar, drive to Gurez&#10;Habba Khatoon Peak, Dawar town..."></textarea></div>
     <div class="mf"><label>Display Order</label><input type="number" id="tourOrder" placeholder="1" min="1"/></div>
     <div class="mfoot">
-      <button class="btn-cancel" onclick="closeMov('tourMov')">Cancel</button>
-      <button class="btn-gold" onclick="saveTour()"><i class="fas fa-save"></i> Save Package</button>
+      <button class="btn-cancel" onclick="document.getElementById('tourMov').classList.remove('open')">Cancel</button>
+      <button class="btn-save" onclick="saveTour()"><i class="fas fa-save"></i> Save Package</button>
     </div>
   </div>
 </div>
 
-<!-- Car Modal -->
+<!-- CAR MODAL -->
 <div class="mov" id="carMov">
   <div class="mbox">
-    <button class="mc" onclick="closeMov('carMov')"><i class="fas fa-times"></i></button>
+    <button class="mc" onclick="document.getElementById('carMov').classList.remove('open')"><i class="fas fa-times"></i></button>
     <h3 id="carMTitle">Add Vehicle</h3>
     <input type="hidden" id="carId"/>
     <div class="mfr">
@@ -90,64 +407,61 @@
     </div>
     <div class="mf">
       <label>Image URL *</label>
-      <input id="carImg" placeholder="https://images.unsplash.com/photo-...?w=600&q=85" oninput="prevImg('carImg','carImgP')"/>
-      <img id="carImgP" class="img-prev" src="" alt="Preview"/>
+      <input id="carImg" placeholder="https://images.unsplash.com/photo-...?w=600&q=85" oninput="previewImg('carImg','carImgPrev')"/>
+      <img id="carImgPrev" class="img-prev" src="" alt=""/>
     </div>
-    <div class="mf"><label>Specs (comma separated)</label><input id="carSpecs" placeholder="7 Passengers, 4 Bags, AC + Heater, GPS, Local Driver"/></div>
+    <div class="mf"><label>Specs (comma separated)</label><input id="carSpecs" placeholder="7 Passengers, AC + Heater, GPS, Local Driver"/></div>
     <div class="mf"><label>Description</label><textarea id="carDesc" rows="3" placeholder="Vehicle description..."></textarea></div>
     <div class="mfr">
-      <div class="mf"><label>Mark as Featured / Most Popular?</label>
-        <select id="carFeat"><option value="false">No</option><option value="true">Yes — Show badge</option></select>
+      <div class="mf"><label>Mark as Featured?</label>
+        <select id="carFeat"><option value="false">No</option><option value="true">Yes — Show Popular badge</option></select>
       </div>
       <div class="mf"><label>Display Order</label><input type="number" id="carOrder" placeholder="1" min="1"/></div>
     </div>
     <div class="mfoot">
-      <button class="btn-cancel" onclick="closeMov('carMov')">Cancel</button>
-      <button class="btn-gold" onclick="saveCar()"><i class="fas fa-save"></i> Save Vehicle</button>
+      <button class="btn-cancel" onclick="document.getElementById('carMov').classList.remove('open')">Cancel</button>
+      <button class="btn-save" onclick="saveCar()"><i class="fas fa-save"></i> Save Vehicle</button>
     </div>
   </div>
 </div>
 
-<!-- Gallery Modal -->
+<!-- GALLERY MODAL -->
 <div class="mov" id="galMov">
   <div class="mbox">
-    <button class="mc" onclick="closeMov('galMov')"><i class="fas fa-times"></i></button>
+    <button class="mc" onclick="document.getElementById('galMov').classList.remove('open')"><i class="fas fa-times"></i></button>
     <h3 id="galMTitle">Add Gallery Image</h3>
     <input type="hidden" id="galId"/>
     <div class="mf">
       <label>Image URL *</label>
-      <input id="galUrl" placeholder="https://images.unsplash.com/photo-...?w=800&q=85" oninput="prevImg('galUrl','galImgP')"/>
-      <img id="galImgP" class="img-prev" src="" alt="Preview"/>
-      <p class="img-hint">💡 <strong>Unsplash:</strong> search → open photo → right-click → "Copy image address"<br/>
-      💡 <strong>Google Drive:</strong> Upload file → Share → "Anyone with link" → copy ID from URL → use: <code>https://drive.google.com/uc?id=YOUR_FILE_ID</code><br/>
-      💡 <strong>Cloudinary:</strong> Upload to your account → copy the delivery URL</p>
+      <input id="galUrl" placeholder="https://images.unsplash.com/photo-...?w=800&q=85" oninput="previewImg('galUrl','galImgPrev')"/>
+      <img id="galImgPrev" class="img-prev" src="" alt=""/>
+      <p class="img-hint">
+        <strong>Unsplash:</strong> open photo &rarr; right-click &rarr; "Copy image address"<br/>
+        <strong>Google Drive:</strong> upload &rarr; share &rarr; get file ID &rarr; <code style="font-size:10px">https://drive.google.com/uc?id=FILE_ID</code><br/>
+        <strong>Cloudinary:</strong> upload to account &rarr; copy delivery URL
+      </p>
     </div>
     <div class="mf"><label>Caption</label><input id="galCap" placeholder="e.g. Gurez Valley at Dawn"/></div>
     <div class="mfr">
       <div class="mf"><label>Category</label>
-        <select id="galCat">
-          <option value="gurez">Gurez Valley</option>
-          <option value="kashmir">Kashmir</option>
-          <option value="adventure">Adventure</option>
-          <option value="other">Other</option>
-        </select>
+        <select id="galCat"><option value="gurez">Gurez Valley</option><option value="kashmir">Kashmir</option><option value="adventure">Adventure</option><option value="other">Other</option></select>
       </div>
       <div class="mf"><label>Display Order</label><input type="number" id="galOrder" placeholder="1" min="1"/></div>
     </div>
     <div class="mfoot">
-      <button class="btn-cancel" onclick="closeMov('galMov')">Cancel</button>
-      <button class="btn-gold" onclick="saveGal()"><i class="fas fa-save"></i> Save Image</button>
+      <button class="btn-cancel" onclick="document.getElementById('galMov').classList.remove('open')">Cancel</button>
+      <button class="btn-save" onclick="saveGal()"><i class="fas fa-save"></i> Save Image</button>
     </div>
   </div>
 </div>
 
-<!-- View Modal -->
+<!-- VIEW MODAL -->
 <div class="mov" id="viewMov">
-  <div class="mbox" style="max-width:520px">
-    <button class="mc" onclick="closeMov('viewMov')"><i class="fas fa-times"></i></button>
+  <div class="mbox" style="max-width:500px">
+    <button class="mc" onclick="document.getElementById('viewMov').classList.remove('open')"><i class="fas fa-times"></i></button>
     <h3>Record Details</h3>
     <div id="viewBody" style="font-size:13px;color:var(--t2);line-height:2"></div>
-    <div class="mfoot"><button class="btn-cancel" onclick="closeMov('viewMov')">Close</button></div>
+    <div class="mfoot"><button class="btn-cancel" onclick="document.getElementById('viewMov').classList.remove('open')">Close</button></div>
   </div>
 </div>
 
@@ -160,35 +474,41 @@ import { getFirestore,collection,addDoc,getDocs,doc,updateDoc,deleteDoc,query,or
 import { getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-const fbCfg = {
-  apiKey:"AIzaSyADiBZe0V5gTnB89Ik1Bby2NDo-9nRxAHc",
-  authDomain:"insta-web-upload.firebaseapp.com",
-  databaseURL:"https://insta-web-upload-default-rtdb.firebaseio.com",
-  projectId:"insta-web-upload",
-  storageBucket:"insta-web-upload.firebasestorage.app",
-  messagingSenderId:"1092302887537",
-  appId:"1:1092302887537:web:a1bb7595868c84c30999d0"
+const FB = {
+ apiKey: "AIzaSyDtfrU0CjLtZJ_MAMinagfynegNL9eQYWQ",
+  authDomain: "trip-orbit.firebaseapp.com",
+  projectId: "trip-orbit",
+  storageBucket: "trip-orbit.firebasestorage.app",
+  messagingSenderId: "892020500031",
+  appId: "1:892020500031:web:dd67a5b7047405e87bfa8a"
 };
-const app  = initializeApp(fbCfg);
+const app  = initializeApp(FB);
 const db   = getFirestore(app);
 const auth = getAuth(app);
 
-// Collection names (prefixed to not conflict with other sites)
-const C = {
-  tours:'triporbit_tours', cars:'triporbit_cars',
-  gallery:'triporbit_gallery', enquiries:'triporbit_enquiries',
-  settings:'triporbit_settings'
-};
+const C = { tours:'triporbit_tours', cars:'triporbit_cars', gallery:'triporbit_gallery', enquiries:'triporbit_enquiries', settings:'triporbit_settings' };
 
-// ── Toast ──────────────────────────────────────────────────────
+// ── Loader ─────────────────────────────────────────────────
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('pageLoader').classList.add('out'),800));
+
+// ── Toast ──────────────────────────────────────────────────
 function toast(msg,type=''){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast '+type;
+  t.textContent=msg; t.className='toast '+(type||'');
   requestAnimationFrame(()=>t.classList.add('show'));
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-// ── Auth ───────────────────────────────────────────────────────
+// ── Image preview ──────────────────────────────────────────
+window.previewImg=function(inpId,prevId){
+  const url=document.getElementById(inpId)?.value.trim();
+  const prev=document.getElementById(prevId);
+  if(!prev)return;
+  if(url){ prev.src=url; prev.classList.add('show'); prev.onerror=()=>prev.classList.remove('show'); }
+  else prev.classList.remove('show');
+};
+
+// ── Auth ───────────────────────────────────────────────────
 onAuthStateChanged(auth,user=>{
   if(user){
     document.getElementById('loginWrap').classList.add('out');
@@ -198,16 +518,19 @@ onAuthStateChanged(auth,user=>{
     document.getElementById('loginWrap').classList.remove('out');
   }
 });
-window.doLogin=async function(){
-  const btn=document.getElementById('loginBtn'),err=document.getElementById('loginErr');
-  const email=document.getElementById('lemail').value.trim(),pass=document.getElementById('lpass').value;
+document.getElementById('loginBtn').addEventListener('click',doLogin);
+document.getElementById('lpass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('lemail').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+async function doLogin(){
+  const btn=document.getElementById('loginBtn'), err=document.getElementById('loginErr');
+  const email=document.getElementById('lemail').value.trim(), pass=document.getElementById('lpass').value;
   err.textContent=''; btn.textContent='Signing in...'; btn.disabled=true;
   try{ await signInWithEmailAndPassword(auth,email,pass); }
   catch(e){ err.textContent='Invalid email or password.'; btn.innerHTML='<i class="fas fa-sign-in-alt"></i> Sign In'; btn.disabled=false; }
-};
+}
 document.getElementById('logoutBtn').addEventListener('click',()=>signOut(auth));
 
-// ── Nav ────────────────────────────────────────────────────────
+// ── Nav ────────────────────────────────────────────────────
 document.querySelectorAll('.ni').forEach(item=>{
   item.addEventListener('click',()=>sw(item.dataset.sec));
 });
@@ -215,133 +538,114 @@ window.sw=function(sec){
   document.querySelectorAll('.ni').forEach(n=>n.classList.toggle('on',n.dataset.sec===sec));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
   document.getElementById('sec-'+sec)?.classList.add('on');
-  document.getElementById('pgTitle').textContent=
-    document.querySelector('.ni[data-sec="'+sec+'"]')?.textContent.trim()||sec;
+  const label = document.querySelector('.ni[data-sec="'+sec+'"]')?.textContent.trim()||sec;
+  document.getElementById('pageLabel').textContent=label;
   loadSec(sec);
 };
 document.getElementById('togBtn').addEventListener('click',()=>{
-  const sb=document.getElementById('sidebar'),mn=document.getElementById('main');
+  const sb=document.getElementById('sidebar'), mn=document.getElementById('mainArea');
   if(window.innerWidth<=768){ sb.classList.toggle('mob'); }
   else{ sb.classList.toggle('off'); mn.classList.toggle('full'); }
 });
 
-// ── Modals ─────────────────────────────────────────────────────
-window.closeMov=id=>document.getElementById(id).classList.remove('open');
-function openMov(id){document.getElementById(id).classList.add('open');}
-document.querySelectorAll('.mov').forEach(m=>{
-  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
-});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape') document.querySelectorAll('.mov.open').forEach(m=>m.classList.remove('open'));
-});
+// Close modals on backdrop click / Escape
+document.querySelectorAll('.mov').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.mov.open').forEach(m=>m.classList.remove('open')); });
 
-// ── Image Preview ──────────────────────────────────────────────
-window.prevImg=function(inputId,prevId){
-  const url=document.getElementById(inputId).value.trim();
-  const prev=document.getElementById(prevId);
-  if(url){ prev.src=url; prev.classList.add('show'); prev.onerror=()=>prev.classList.remove('show'); }
-  else prev.classList.remove('show');
-};
+// ── Helpers ────────────────────────────────────────────────
+function v(id){ return document.getElementById(id)?.value?.trim()||''; }
+function sv(id,val){ const el=document.getElementById(id); if(el) el.value=val??''; }
+function clr(ids){ ids.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; }); }
+function prevImg(id){ const el=document.getElementById(id); if(el) el.classList.remove('show'); }
+function secLoad(){ const m={dashboard:loadDash,tours:loadTours,cars:loadCars,gallery:loadGallery,enquiries:loadEnquiries}; return m; }
+function loadSec(sec){ secLoad()[sec]?.(); }
+function fmtDate(ts){ try{ const d=ts?.toDate?ts.toDate():new Date(ts); return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch{return '';} }
 
-// ── Helpers ────────────────────────────────────────────────────
-function v(id){return document.getElementById(id)?.value?.trim()||'';}
-function sv(id,val){const el=document.getElementById(id);if(el)el.value=val||'';}
-function clrFields(ids){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';})}
-function fmtDate(ts){if(!ts)return '';try{const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return '';}}
-
-// ── Section Router ─────────────────────────────────────────────
-function loadSec(sec){
-  const map={dashboard:loadDash,tours:loadTours,cars:loadCars,gallery:loadGallery,enquiries:loadEnquiries};
-  map[sec]?.();
-}
-
-// ── Dashboard ──────────────────────────────────────────────────
+// ── Dashboard ──────────────────────────────────────────────
 async function loadDash(){
-  for(const [col,el] of [[C.tours,'cT'],[C.cars,'cC'],[C.gallery,'cG'],[C.enquiries,'cE']]){
-    try{ const s=await getDocs(collection(db,col));document.getElementById(el).textContent=s.size; }
-    catch{ document.getElementById(el).textContent='—'; }
+  for(const [col,elId] of [[C.tours,'cTours'],[C.cars,'cCars'],[C.gallery,'cGal'],[C.enquiries,'cEnq']]){
+    try{ const s=await getDocs(collection(db,col)); document.getElementById(elId).textContent=s.size; }
+    catch{ document.getElementById(elId).textContent='—'; }
   }
-  // Recent enquiries
-  const de=document.getElementById('dE');
+  const de=document.getElementById('dashEnq');
   try{
     const s=await getDocs(query(collection(db,C.enquiries),orderBy('createdAt','desc'),limit(6)));
     de.innerHTML=s.empty?'<p style="font-size:12px;color:var(--t2)">No enquiries yet.</p>':
-      s.docs.map(d=>{const e=d.data();return`<div class="dr"><span style="font-weight:600">${e.name||'—'}</span><span style="color:var(--t2);font-size:11px">${e.tourType||'—'}</span><span class="bdg bdg-${e.status||'new'}">${e.status||'new'}</span></div>`;}).join('');
-  }catch{de.innerHTML='<p style="font-size:12px;color:var(--t2)">Connect Firestore to view.</p>';}
-  // Tour packages
-  const dt=document.getElementById('dT');
+      s.docs.map(d=>{const e=d.data();return`<div class="dr"><span style="font-weight:600">${e.name||'—'}</span><span style="font-size:11px;color:var(--t2)">${e.tourType||'—'}</span><span class="bdg bdg-${e.status||'new'}">${e.status||'new'}</span></div>`;}).join('');
+  }catch{de.innerHTML='<p style="font-size:12px;color:var(--t2)">Loading Firestore data...</p>';}
+  const dt=document.getElementById('dashTours');
   try{
     const s=await getDocs(query(collection(db,C.tours),orderBy('order','asc'),limit(6)));
     dt.innerHTML=s.empty?'<p style="font-size:12px;color:var(--t2)">No tours yet. Add your first!</p>':
-      s.docs.map(d=>{const t=d.data();return`<div class="dr"><span style="font-weight:600">${t.title||'—'}</span><span class="bdg bdg-${t.cat||'gurez'}">${t.cat||'gurez'}</span></div>`;}).join('');
-  }catch{dt.innerHTML='<p style="font-size:12px;color:var(--t2)">Connect Firestore to view.</p>';}
+      s.docs.map(d=>{const t=d.data();return`<div class="dr"><span style="font-weight:600">${t.title||'—'}</span><span class="bdg bdg-${t.cat||'gurez'}">${t.cat||'—'}</span></div>`;}).join('');
+  }catch{dt.innerHTML='<p style="font-size:12px;color:var(--t2)">Loading Firestore data...</p>';}
 }
 
-// ── Tours CRUD ─────────────────────────────────────────────────
+// ── Tours CRUD ─────────────────────────────────────────────
 let tourCache=[];
 async function loadTours(){
   const tb=document.getElementById('toursBody');
-  tb.innerHTML='<tr><td colspan="7" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr>';
-  try{const s=await getDocs(query(collection(db,C.tours),orderBy('order','asc')));tourCache=[];s.forEach(d=>tourCache.push({id:d.id,...d.data()}));}
-  catch{tourCache=[];}
-  document.getElementById('tourCnt').textContent='('+tourCache.length+')';
-  if(!tourCache.length){tb.innerHTML='<tr><td colspan="7" class="empty-row"><i class="fas fa-compass"></i>No tour packages yet.</td></tr>';return;}
+  tb.innerHTML='<tr><td colspan="7" class="loading-row"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+  try{ const s=await getDocs(query(collection(db,C.tours),orderBy('order','asc'))); tourCache=[]; s.forEach(d=>tourCache.push({id:d.id,...d.data()})); }
+  catch{ tourCache=[]; }
+  document.getElementById('toursCnt').textContent='('+tourCache.length+')';
+  if(!tourCache.length){ tb.innerHTML='<tr><td colspan="7" class="empty-row"><i class="fas fa-compass"></i>No tours yet.</td></tr>'; return; }
   tb.innerHTML=tourCache.map(t=>`<tr>
-    <td>${t.image?`<img src="${t.image}" class="thumb" onerror="this.style.display='none'" alt=""/>`:'—'}</td>
+    <td>${t.image?`<img src="${t.image}" class="tthumb" onerror="this.style.display='none'" alt=""/>`:'—'}</td>
     <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.title||'—'}</td>
     <td><span class="bdg bdg-${t.cat||'gurez'}">${t.cat||'—'}</span></td>
     <td style="color:var(--t2)">${t.duration||'—'}</td>
     <td style="color:var(--t2)">${t.groupSize||'—'}</td>
     <td style="color:var(--t2)">${t.order||1}</td>
     <td><div class="acts">
-      <button class="ab ab-e" onclick="openTourMod('${t.id}')" title="Edit"><i class="fas fa-edit"></i></button>
-      <button class="ab ab-d" onclick="delRec('${C.tours}','${t.id}',loadTours)" title="Delete"><i class="fas fa-trash"></i></button>
+      <button class="ab ab-e" title="Edit" onclick="openTourMod('${t.id}')"><i class="fas fa-edit"></i></button>
+      <button class="ab ab-d" title="Delete" onclick="delRec('${C.tours}','${t.id}',loadTours)"><i class="fas fa-trash"></i></button>
     </div></td>
   </tr>`).join('');
 }
 window.openTourMod=function(id){
-  clrFields(['tourId','tourTitle','tourDur','tourGrp','tourBadgeTxt','tourImg','tourDesc','tourInc','tourItin','tourOrder']);
-  document.getElementById('tourImgP').classList.remove('show');
+  clr(['tourId','tourTitle','tourDur','tourGrp','tourBadgeTxt','tourImg','tourDesc','tourInc','tourItin','tourOrder']);
+  prevImg('tourImgPrev');
   if(id){
-    const t=tourCache.find(x=>x.id===id);if(!t)return;
-    sv('tourId',id);sv('tourTitle',t.title);sv('tourCat',t.cat);sv('tourDur',t.duration);
-    sv('tourGrp',t.groupSize);sv('tourBadge',t.badge||'');sv('tourBadgeTxt',t.badgeText||t.bdgText||'');
-    sv('tourImg',t.image);sv('tourDesc',t.desc||t.description);
-    sv('tourInc',(t.includes||[]).join(', '));sv('tourItin',(t.itinerary||[]).join('\n'));sv('tourOrder',t.order||1);
-    if(t.image){const p=document.getElementById('tourImgP');p.src=t.image;p.classList.add('show');}
+    const t=tourCache.find(x=>x.id===id); if(!t)return;
+    sv('tourId',id); sv('tourTitle',t.title); sv('tourCat',t.cat); sv('tourDur',t.duration);
+    sv('tourGrp',t.groupSize); sv('tourBadge',t.badge||''); sv('tourBadgeTxt',t.badgeText||'');
+    sv('tourImg',t.image); sv('tourDesc',t.desc||t.description||'');
+    sv('tourInc',(t.includes||[]).join(', ')); sv('tourItin',(t.itinerary||[]).join('\n'));
+    sv('tourOrder',t.order||1);
+    if(t.image){ const p=document.getElementById('tourImgPrev'); p.src=t.image; p.classList.add('show'); }
     document.getElementById('tourMTitle').textContent='Edit Tour Package';
   } else { document.getElementById('tourMTitle').textContent='Add Tour Package'; }
-  openMov('tourMov');
+  document.getElementById('tourMov').classList.add('open');
 };
 window.saveTour=async function(){
-  if(!v('tourTitle')){toast('Tour title is required','err');return;}
+  if(!v('tourTitle')){ toast('Tour title is required','err'); return; }
   const id=v('tourId');
-  const data={
-    title:v('tourTitle'),cat:v('tourCat'),duration:v('tourDur'),groupSize:v('tourGrp'),
-    badge:v('tourBadge'),badgeText:v('tourBadgeTxt'),image:v('tourImg'),
-    desc:v('tourDesc'),
+  const data={title:v('tourTitle'),cat:v('tourCat'),duration:v('tourDur'),groupSize:v('tourGrp'),
+    badge:v('tourBadge'),badgeText:v('tourBadgeTxt'),image:v('tourImg'),desc:v('tourDesc'),
     includes:v('tourInc').split(',').map(s=>s.trim()).filter(Boolean),
     itinerary:v('tourItin').split('\n').map(s=>s.trim()).filter(Boolean),
-    order:parseInt(v('tourOrder'))||1, updatedAt:serverTimestamp()
-  };
+    order:parseInt(v('tourOrder'))||1, updatedAt:serverTimestamp()};
   try{
     if(id) await updateDoc(doc(db,C.tours,id),data);
     else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.tours),data); }
-    toast(id?'Tour updated!':'Tour added!','ok'); closeMov('tourMov'); loadTours();
-  }catch(e){toast('Error: '+e.message,'err');}
+    toast(id?'Tour updated!':'Tour added!','ok');
+    document.getElementById('tourMov').classList.remove('open');
+    loadTours();
+  }catch(e){ toast('Error: '+e.message,'err'); }
 };
 
-// ── Cars CRUD ──────────────────────────────────────────────────
+// ── Cars CRUD ──────────────────────────────────────────────
 let carCache=[];
 async function loadCars(){
   const tb=document.getElementById('carsBody');
   tb.innerHTML='<tr><td colspan="6" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr>';
-  try{const s=await getDocs(query(collection(db,C.cars),orderBy('order','asc')));carCache=[];s.forEach(d=>carCache.push({id:d.id,...d.data()}));}
-  catch{carCache=[];}
-  document.getElementById('carCnt').textContent='('+carCache.length+')';
-  if(!carCache.length){tb.innerHTML='<tr><td colspan="6" class="empty-row"><i class="fas fa-car"></i>No vehicles yet.</td></tr>';return;}
+  try{ const s=await getDocs(query(collection(db,C.cars),orderBy('order','asc'))); carCache=[]; s.forEach(d=>carCache.push({id:d.id,...d.data()})); }
+  catch{ carCache=[]; }
+  document.getElementById('carsCnt').textContent='('+carCache.length+')';
+  if(!carCache.length){ tb.innerHTML='<tr><td colspan="6" class="empty-row"><i class="fas fa-car"></i>No vehicles yet.</td></tr>'; return; }
   tb.innerHTML=carCache.map(c=>`<tr>
-    <td>${c.image?`<img src="${c.image}" class="thumb" onerror="this.style.display='none'" alt=""/>`:'—'}</td>
+    <td>${c.image?`<img src="${c.image}" class="tthumb" onerror="this.style.display='none'" alt=""/>`:'—'}</td>
     <td style="font-weight:600">${c.name||'—'}</td>
     <td style="color:var(--t2)">${c.sub||'—'}</td>
     <td>${c.featured?'<span class="bdg bdg-confirmed">Yes</span>':'—'}</td>
@@ -353,43 +657,40 @@ async function loadCars(){
   </tr>`).join('');
 }
 window.openCarMod=function(id){
-  clrFields(['carId','carName','carSub','carImg','carSpecs','carDesc','carOrder']);
-  document.getElementById('carImgP').classList.remove('show');
+  clr(['carId','carName','carSub','carImg','carSpecs','carDesc','carOrder']); prevImg('carImgPrev');
   if(id){
-    const c=carCache.find(x=>x.id===id);if(!c)return;
-    sv('carId',id);sv('carName',c.name);sv('carSub',c.sub);sv('carImg',c.image);
-    sv('carSpecs',(c.specs||[]).join(', '));sv('carDesc',c.desc||c.description||'');
-    sv('carFeat',String(!!c.featured));sv('carOrder',c.order||1);
-    if(c.image){const p=document.getElementById('carImgP');p.src=c.image;p.classList.add('show');}
+    const c=carCache.find(x=>x.id===id); if(!c)return;
+    sv('carId',id); sv('carName',c.name); sv('carSub',c.sub); sv('carImg',c.image);
+    sv('carSpecs',(c.specs||[]).join(', ')); sv('carDesc',c.desc||c.description||'');
+    sv('carFeat',String(!!c.featured)); sv('carOrder',c.order||1);
+    if(c.image){ const p=document.getElementById('carImgPrev'); p.src=c.image; p.classList.add('show'); }
     document.getElementById('carMTitle').textContent='Edit Vehicle';
   } else { document.getElementById('carMTitle').textContent='Add Vehicle'; }
-  openMov('carMov');
+  document.getElementById('carMov').classList.add('open');
 };
 window.saveCar=async function(){
-  if(!v('carName')){toast('Vehicle name required','err');return;}
+  if(!v('carName')){ toast('Vehicle name required','err'); return; }
   const id=v('carId');
-  const data={
-    name:v('carName'),sub:v('carSub'),image:v('carImg'),
+  const data={name:v('carName'),sub:v('carSub'),image:v('carImg'),
     specs:v('carSpecs').split(',').map(s=>s.trim()).filter(Boolean),
     desc:v('carDesc'),featured:v('carFeat')==='true',
-    order:parseInt(v('carOrder'))||1, updatedAt:serverTimestamp()
-  };
+    order:parseInt(v('carOrder'))||1, updatedAt:serverTimestamp()};
   try{
     if(id) await updateDoc(doc(db,C.cars,id),data);
     else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.cars),data); }
-    toast('Vehicle saved!','ok'); closeMov('carMov'); loadCars();
-  }catch(e){toast('Error: '+e.message,'err');}
+    toast('Vehicle saved!','ok'); document.getElementById('carMov').classList.remove('open'); loadCars();
+  }catch(e){ toast('Error: '+e.message,'err'); }
 };
 
-// ── Gallery CRUD ───────────────────────────────────────────────
+// ── Gallery CRUD ───────────────────────────────────────────
 let galCache=[];
 async function loadGallery(){
-  const grid=document.getElementById('galGrid');
+  const grid=document.getElementById('adminGalGrid');
   grid.innerHTML='<p style="padding:18px;color:var(--t2);font-size:12px"><i class="fas fa-spinner fa-spin"></i> Loading...</p>';
-  try{const s=await getDocs(query(collection(db,C.gallery),orderBy('order','asc')));galCache=[];s.forEach(d=>galCache.push({id:d.id,...d.data()}));}
-  catch{galCache=[];}
+  try{ const s=await getDocs(query(collection(db,C.gallery),orderBy('order','asc'))); galCache=[]; s.forEach(d=>galCache.push({id:d.id,...d.data()})); }
+  catch{ galCache=[]; }
   document.getElementById('galCnt').textContent='('+galCache.length+')';
-  if(!galCache.length){grid.innerHTML='<p style="padding:18px;color:var(--t2);font-size:12px">No images yet. Click "Add Image" to get started.</p>';return;}
+  if(!galCache.length){ grid.innerHTML='<p style="padding:18px;color:var(--t2);font-size:12px">No images yet. Click "Add Image" to start.</p>'; return; }
   grid.innerHTML=galCache.map(img=>`
     <div class="ag-item">
       <img src="${img.url||''}" alt="${img.caption||''}" onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400'"/>
@@ -401,71 +702,74 @@ async function loadGallery(){
     </div>`).join('');
 }
 window.openGalMod=function(id){
-  clrFields(['galId','galUrl','galCap','galOrder']); document.getElementById('galImgP').classList.remove('show');
+  clr(['galId','galUrl','galCap','galOrder']); prevImg('galImgPrev');
   if(id){
-    const img=galCache.find(x=>x.id===id);if(!img)return;
-    sv('galId',id);sv('galUrl',img.url);sv('galCap',img.caption);sv('galCat',img.cat||'gurez');sv('galOrder',img.order||1);
-    if(img.url){const p=document.getElementById('galImgP');p.src=img.url;p.classList.add('show');}
+    const img=galCache.find(x=>x.id===id); if(!img)return;
+    sv('galId',id); sv('galUrl',img.url); sv('galCap',img.caption); sv('galCat',img.cat||'gurez'); sv('galOrder',img.order||1);
+    if(img.url){ const p=document.getElementById('galImgPrev'); p.src=img.url; p.classList.add('show'); }
     document.getElementById('galMTitle').textContent='Edit Gallery Image';
   } else { document.getElementById('galMTitle').textContent='Add Gallery Image'; }
-  openMov('galMov');
+  document.getElementById('galMov').classList.add('open');
 };
 window.saveGal=async function(){
-  if(!v('galUrl')){toast('Image URL required','err');return;}
+  if(!v('galUrl')){ toast('Image URL required','err'); return; }
   const id=v('galId');
   const data={url:v('galUrl'),caption:v('galCap'),cat:v('galCat'),order:parseInt(v('galOrder'))||1,updatedAt:serverTimestamp()};
   try{
     if(id) await updateDoc(doc(db,C.gallery,id),data);
     else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.gallery),data); }
-    toast('Image saved!','ok'); closeMov('galMov'); loadGallery();
-  }catch(e){toast('Error: '+e.message,'err');}
+    toast('Image saved!','ok'); document.getElementById('galMov').classList.remove('open'); loadGallery();
+  }catch(e){ toast('Error: '+e.message,'err'); }
 };
 
-// ── Enquiries ──────────────────────────────────────────────────
-let enqCache=[];
+// ── Enquiries ──────────────────────────────────────────────
+let enqAll=[];
 async function loadEnquiries(){
   const tb=document.getElementById('enqBody');
   tb.innerHTML='<tr><td colspan="8" class="loading-row"><i class="fas fa-spinner fa-spin"></i></td></tr>';
-  try{const s=await getDocs(query(collection(db,C.enquiries),orderBy('createdAt','desc')));enqCache=[];s.forEach(d=>enqCache.push({id:d.id,...d.data()}));}
-  catch{enqCache=[];}
-  document.getElementById('enqCnt').textContent='('+enqCache.length+')';
-  renderEnq(enqCache);
+  try{ const s=await getDocs(query(collection(db,C.enquiries),orderBy('createdAt','desc'))); enqAll=[]; s.forEach(d=>enqAll.push({id:d.id,...d.data()})); }
+  catch{ enqAll=[]; }
+  document.getElementById('enqCnt').textContent='('+enqAll.length+')';
+  renderEnq(enqAll);
 }
 function renderEnq(data){
   const tb=document.getElementById('enqBody');
-  if(!data.length){tb.innerHTML='<tr><td colspan="8" class="empty-row"><i class="fas fa-envelope"></i>No enquiries yet.</td></tr>';return;}
-  tb.innerHTML=data.map(e=>`<tr>
+  if(!data.length){ tb.innerHTML='<tr><td colspan="8" class="empty-row"><i class="fas fa-envelope"></i>No enquiries yet.</td></tr>'; return; }
+  tb.innerHTML=data.map(e=>{
+    const ph=(e.phone||'').replace(/[^0-9]/g,'');
+    const waLink='https://wa.me/'+ph+'?text=Hi%20'+encodeURIComponent(e.name||'')+'!%20Thank%20you%20for%20enquiring%20about%20TripOrbit.';
+    return`<tr>
     <td style="font-weight:600">${e.name||'—'}</td>
     <td><a href="tel:${e.phone}" style="color:var(--sky)">${e.phone||'—'}</a></td>
-    <td style="color:var(--t2);font-size:11px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.email||'—'}</td>
-    <td style="font-size:12px">${e.tourType||e.package||'—'}</td>
-    <td style="color:var(--t2);white-space:nowrap">${e.travelDate||'—'}</td>
+    <td style="color:var(--t2);font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.email||'—'}</td>
+    <td style="font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.tourType||e.package||'—'}</td>
+    <td style="color:var(--t2);white-space:nowrap;font-size:12px">${e.travelDate||'—'}</td>
     <td style="font-size:11px;color:var(--t2)">${e.source||'—'}</td>
     <td><select class="ssel" onchange="updStatus('${C.enquiries}','${e.id}',this.value)">
-      <option value="new" ${e.status==='new'?'selected':''}>New</option>
-      <option value="contacted" ${e.status==='contacted'?'selected':''}>Contacted</option>
-      <option value="confirmed" ${e.status==='confirmed'?'selected':''}>Confirmed</option>
-      <option value="done" ${e.status==='done'?'selected':''}>Done</option>
+      <option value="new"${e.status==='new'?' selected':''}>New</option>
+      <option value="contacted"${e.status==='contacted'?' selected':''}>Contacted</option>
+      <option value="confirmed"${e.status==='confirmed'?' selected':''}>Confirmed</option>
+      <option value="done"${e.status==='done'?' selected':''}>Done</option>
     </select></td>
     <td><div class="acts">
-      <a class="ab ab-w" href="https://wa.me/${(e.phone||'').replace(/[^0-9]/g,'')}?text=Hi%20${encodeURIComponent(e.name||'')}!%20Thank%20you%20for%20enquiring%20about%20TripOrbit." target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-      <button class="ab ab-v" onclick="viewRec(${JSON.stringify(e).replace(/'/g,'&apos;')})" title="View"><i class="fas fa-eye"></i></button>
-      <button class="ab ab-d" onclick="delRec('${C.enquiries}','${e.id}',loadEnquiries)" title="Delete"><i class="fas fa-trash"></i></button>
+      <a class="ab ab-w" href="${waLink}" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      <button class="ab ab-v" title="View" onclick='viewRec(${JSON.stringify(e)})'><i class="fas fa-eye"></i></button>
+      <button class="ab ab-d" title="Delete" onclick="delRec('${C.enquiries}','${e.id}',loadEnquiries)"><i class="fas fa-trash"></i></button>
     </div></td>
-  </tr>`).join('');
+  </tr>`;}).join('');
 }
 document.getElementById('enqSearch').addEventListener('input',function(){
   const q=this.value.toLowerCase();
-  renderEnq(enqCache.filter(e=>`${e.name}${e.phone}${e.email}`.toLowerCase().includes(q)));
+  renderEnq(enqAll.filter(e=>(e.name+e.phone+e.email).toLowerCase().includes(q)));
 });
 
-// ── Shared CRUD helpers ────────────────────────────────────────
+// ── Shared helpers ─────────────────────────────────────────
 window.updStatus=async function(col,id,status){
   try{ await updateDoc(doc(db,col,id),{status,updatedAt:serverTimestamp()}); toast('Status updated','ok'); }
-  catch(e){ toast('Error: '+e.message,'err'); }
+  catch(e){ toast('Error','err'); }
 };
 window.delRec=async function(col,id,reload){
-  if(!confirm('Delete this record permanently? This cannot be undone.')) return;
+  if(!confirm('Delete this record permanently?')) return;
   try{ await deleteDoc(doc(db,col,id)); toast('Deleted','ok'); reload?.(); }
   catch(e){ toast('Error: '+e.message,'err'); }
 };
@@ -473,29 +777,20 @@ window.viewRec=function(rec){
   const skip=['id'];
   document.getElementById('viewBody').innerHTML='<table style="width:100%;border-collapse:collapse">'+
     Object.entries(rec).filter(([k])=>!skip.includes(k)).map(([k,val])=>
-      `<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 0;font-weight:600;color:var(--text);width:130px;text-transform:capitalize;font-size:11px;letter-spacing:.5px">${k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase())}</td><td style="padding:6px 0;color:var(--t2)">${val?.toDate?val.toDate().toLocaleDateString('en-IN'):Array.isArray(val)?val.join(', '):(String(val||'—'))}</td></tr>`
+      `<tr style="border-bottom:1px solid #f1f5f9"><td style="padding:6px 0;font-weight:600;color:var(--text);width:120px;font-size:11px;text-transform:capitalize">${k.replace(/([A-Z])/g,' $1')}</td><td style="padding:6px 0;color:var(--t2);font-size:13px">${val?.toDate?val.toDate().toLocaleDateString('en-IN'):Array.isArray(val)?val.join(', '):String(val||'—')}</td></tr>`
     ).join('')+'</table>';
-  openMov('viewMov');
+  document.getElementById('viewMov').classList.add('open');
 };
 
-// ── Settings ───────────────────────────────────────────────────
+// ── Settings ───────────────────────────────────────────────
 window.saveSettings=async function(){
-  const data={
-    bizName:document.getElementById('sBiz').value.trim(),
-    phone:document.getElementById('sPhone').value.trim(),
-    email:document.getElementById('sEmail').value.trim(),
-    address:document.getElementById('sAddr').value.trim(),
-    website:document.getElementById('sURL').value.trim(),
-    facebook:document.getElementById('sFB').value.trim(),
-    makemetop:document.getElementById('sMMT').value.trim(),
-    updatedAt:serverTimestamp()
-  };
+  const data={bizName:v('sBiz'),phone:v('sPhone'),email:v('sEmail'),address:v('sAddr'),website:v('sURL'),facebook:v('sFB'),makemetop:v('sMMT'),updatedAt:serverTimestamp()};
   try{
     const snap=await getDocs(collection(db,C.settings));
     if(!snap.empty) await updateDoc(doc(db,C.settings,snap.docs[0].id),data);
     else{ data.createdAt=serverTimestamp(); await addDoc(collection(db,C.settings),data); }
     toast('Settings saved!','ok');
-  }catch(e){toast('Error: '+e.message,'err');}
+  }catch(e){ toast('Error: '+e.message,'err'); }
 };
 </script>
 </body>
