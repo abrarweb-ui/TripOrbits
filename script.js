@@ -10,12 +10,12 @@
   var TEL     = 'tel:+917889693186';
 
   var FB_CFG = {
-    apiKey: "AIzaSyDtfrU0CjLtZJ_MAMinagfynegNL9eQYWQ",
-  authDomain: "trip-orbit.firebaseapp.com",
-  projectId: "trip-orbit",
-  storageBucket: "trip-orbit.firebasestorage.app",
-  messagingSenderId: "892020500031",
-  appId: "1:892020500031:web:dd67a5b7047405e87bfa8a"
+    apiKey:            "AIzaSyDtfrU0CjLtZJ_MAMinagfynegNL9eQYWQ",
+    authDomain:        "trip-orbit.firebaseapp.com",
+    projectId:         "trip-orbit",
+    storageBucket:     "trip-orbit.firebasestorage.app",
+    messagingSenderId: "892020500031",
+    appId:             "1:892020500031:web:a1bb7595868c84c30999d0"
   };
 
   var COLS = {
@@ -300,15 +300,16 @@
   function loadTours() {
     renderTours('all');
     onFB(function(db, f) {
-      f.getDocs(f.query(f.collection(db, COLS.tours), f.orderBy('order', 'asc')))
+      f.getDocs(f.collection(db, COLS.tours))
         .then(function(snap) {
           if (!snap.empty) {
             toursData = [];
             snap.forEach(function(d) { toursData.push(Object.assign({ id: d.id }, d.data())); });
+            toursData.sort(function(a,b){ return (parseInt(a.order)||99) - (parseInt(b.order)||99); });
             var a = document.querySelector('#tourFilters .gal-btn.on');
             renderTours(a ? a.getAttribute('data-f') : 'all');
           }
-        }).catch(function() {});
+        }).catch(function(err) { console.warn('Tours load error:', err); });
     });
   }
 
@@ -396,14 +397,15 @@
   function loadCars() {
     renderCars(carsData);
     onFB(function(db, f) {
-      f.getDocs(f.query(f.collection(db, COLS.cars), f.orderBy('order', 'asc')))
+      f.getDocs(f.collection(db, COLS.cars))
         .then(function(snap) {
           if (!snap.empty) {
             carsData = [];
             snap.forEach(function(d) { carsData.push(Object.assign({ id: d.id }, d.data())); });
+            carsData.sort(function(a,b){ return (parseInt(a.order)||99) - (parseInt(b.order)||99); });
             renderCars(carsData);
           }
-        }).catch(function() {});
+        }).catch(function(err) { console.warn('Cars load error:', err); });
     });
   }
 
@@ -433,15 +435,16 @@
   function loadGallery() {
     renderGal('all');
     onFB(function(db, f) {
-      f.getDocs(f.query(f.collection(db, COLS.gallery), f.orderBy('order', 'asc')))
+      f.getDocs(f.collection(db, COLS.gallery))
         .then(function(snap) {
           if (!snap.empty) {
             galData = [];
             snap.forEach(function(d) { galData.push(Object.assign({ id: d.id }, d.data())); });
+            galData.sort(function(a,b){ return (parseInt(a.order)||99) - (parseInt(b.order)||99); });
             var a = document.querySelector('#galFilters .gal-btn.on');
             renderGal(a ? a.getAttribute('data-cat') : 'all');
           }
-        }).catch(function() {});
+        }).catch(function(err) { console.warn('Gallery load error:', err); });
     });
   }
 
