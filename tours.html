@@ -4,9 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>Tour Packages – TripOrbit | Gurez Valley & Kashmir Tours</title>
-<meta name="description" content="Browse all Gurez Valley and Kashmir tour packages by TripOrbit. Honeymoon, family, adventure and group tours. Inquire on WhatsApp."/>
-<meta name="keywords" content="Gurez Valley tour packages, Kashmir travel agency, TripOrbit, Umar Farooq Markoot Gurez, Kashmir taxi"/>
+<meta name="description" content="Browse all Gurez Valley and Kashmir tour packages by TripOrbit. Honeymoon, family, adventure and group tours."/>
 <link rel="canonical" href="https://trip-orbit.com/tours.html"/>
+<meta property="og:title" content="Tour Packages – TripOrbit | Gurez Valley & Kashmir Tours"/>
+<meta property="og:description" content="Browse all Gurez Valley and Kashmir tour packages by TripOrbit. Honeymoon, family, adventure and group tours."/>
+<meta property="og:image" content="https://images.unsplash.com/photo-1626714638456-5f14c9427ad4?w=1200&q=80"/>
 <link rel="icon" type="image/png" href="favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -40,7 +42,11 @@
 </div>
 <section class="sec services-bg">
   <div class="wrap">
-    <div class="sh c rv"><div class="lbl">Curated Journeys</div><h2 class="ttl">Explore All <em>Packages</em></h2><p class="sub-txt">Select a category or browse all — inquire directly on WhatsApp for availability and custom itineraries</p></div>
+    <div class="sh c rv">
+      <div class="lbl">Curated Journeys</div>
+      <h2 class="ttl">Explore All <em>Packages</em></h2>
+      <p class="sub-txt">Select a category or browse all &mdash; inquire directly on WhatsApp for availability and custom itineraries</p>
+    </div>
     <div class="gal-filter rv" id="tourFilters">
       <button class="gal-btn on" data-f="all">All Tours</button>
       <button class="gal-btn" data-f="gurez">Gurez Valley</button>
@@ -50,16 +56,21 @@
       <button class="gal-btn" data-f="family">Family</button>
       <button class="gal-btn" data-f="group">Group</button>
     </div>
-    <div class="tour-grid" id="toursGrid"></div>
+    <div class="tour-grid" id="toursGrid">
+      <div style="padding:40px;text-align:center;color:var(--text2);grid-column:span 3"><i class="fas fa-spinner fa-spin" style="font-size:24px"></i></div>
+    </div>
   </div>
 </section>
-
-<!-- CUSTOM TOUR CTA -->
 <div class="cta-strip">
-  <div class="wrap"><div class="cta-inner">
-    <div><h2>Can't find the right package?</h2><p>Tell us your preferences — we'll craft a custom itinerary just for you.</p></div>
-    <div class="cta-btns"><a href="https://wa.me/917889693186?text=Hi%20TripOrbit!%20I%20want%20to%20enquire%20about%20a%20Kashmir%2FGurez%20trip." target="_blank" class="btn btn-royal"><i class="fab fa-whatsapp"></i> Custom Tour on WhatsApp</a><a href="tel:+917889693186" class="btn btn-white"><i class="fas fa-phone-alt"></i> Call Umar Farooq</a></div>
-  </div></div>
+  <div class="wrap">
+    <div class="cta-inner">
+      <div><h2>Can&rsquo;t find the right package?</h2><p>Tell us your preferences &mdash; we&rsquo;ll craft a custom itinerary just for you.</p></div>
+      <div class="cta-btns">
+        <a href="https://wa.me/917889693186?text=Hi%20TripOrbit!%20I%20want%20to%20enquire%20about%20a%20Kashmir%2FGurez%20trip." target="_blank" class="btn btn-royal"><i class="fab fa-whatsapp"></i> Custom Tour on WhatsApp</a>
+        <a href="tel:+917889693186" class="btn btn-white"><i class="fas fa-phone-alt"></i> Call Umar Farooq</a>
+      </div>
+    </div>
+  </div>
 </div>
 <footer>
   <div class="ft"><div class="wrap"><div class="ft-grid">
@@ -75,8 +86,22 @@
         <a href="mailto:triporbit1@gmail.com"><i class="fas fa-envelope"></i></a>
       </div>
     </div>
-    <div class="ft-col"><h4>Quick Links</h4><ul><li><a href="index.html">Home</a></li><li><a href="tours.html">Tour Packages</a></li><li><a href="cars.html">Vehicles</a></li><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy.html">Privacy Policy</a></li></ul></div>
-    <div class="ft-col"><h4>Our Services</h4><ul><li><a href="tours.html">Gurez Valley Tours</a></li><li><a href="tours.html">Kashmir Packages</a></li><li><a href="tours.html">Honeymoon Trips</a></li><li><a href="tours.html">Adventure Tours</a></li><li><a href="cars.html">Taxi Services</a></li><li><a href="tours.html">Group Tours</a></li></ul></div>
+    <div class="ft-col"><h4>Quick Links</h4><ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="tours.html">Tour Packages</a></li>
+      <li><a href="cars.html">Vehicles</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="privacy.html">Privacy Policy</a></li>
+    </ul></div>
+    <div class="ft-col"><h4>Our Services</h4><ul>
+      <li><a href="tours.html">Gurez Valley Tours</a></li>
+      <li><a href="tours.html">Kashmir Packages</a></li>
+      <li><a href="tours.html">Honeymoon Trips</a></li>
+      <li><a href="tours.html">Adventure Tours</a></li>
+      <li><a href="cars.html">Taxi Services</a></li>
+      <li><a href="tours.html">Group Tours</a></li>
+    </ul></div>
     <div class="ft-col"><h4>Contact</h4>
       <div class="ft-ci"><i class="fas fa-phone-alt"></i><a href="tel:+917889693186">+91 78896 93186</a></div>
       <div class="ft-ci"><i class="fab fa-whatsapp"></i><a href="https://wa.me/917889693186?text=Hi%20TripOrbit!%20I%20want%20to%20enquire%20about%20a%20Kashmir%2FGurez%20trip.">+91 78896 93186</a></div>
@@ -85,10 +110,25 @@
     </div>
   </div></div></div>
   <div class="fb"><div class="wrap">&copy; 2026 TripOrbit. All Rights Reserved. | Designed by <a href="#">Abrarr Tallks</a> | <a href="privacy.html">Privacy Policy</a></div></div>
-</footer><a href="https://wa.me/917889693186?text=Hi%20TripOrbit!%20I%20want%20to%20enquire%20about%20a%20Kashmir%2FGurez%20trip." target="_blank" class="wa-float" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i><span class="wa-tip">Chat with us!</span></a>
+</footer>
+<a href="https://wa.me/917889693186?text=Hi%20TripOrbit!%20I%20want%20to%20enquire%20about%20a%20Kashmir%2FGurez%20trip." target="_blank" class="wa-float" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i><span class="wa-tip">Chat with us!</span></a>
 <a href="tel:+917889693186" class="call-float" aria-label="Call"><i class="fas fa-phone-alt"></i><span class="call-tip">+91 78896 93186</span></a>
 <button class="sct" id="sct"><i class="fas fa-chevron-up"></i></button>
 <div class="toast" id="toast"></div>
-<div class="sbb" id="sbb"><div class="sbb-txt"><strong>Plan Your Gurez Trip</strong><span>Free quote in 2 hours</span></div><div class="sbb-btns"><a href="https://wa.me/917889693186?text=Hi%20TripOrbit!%20I%20want%20to%20enquire%20about%20a%20Kashmir%2FGurez%20trip." target="_blank" class="btn btn-wa btn-sm"><i class="fab fa-whatsapp"></i> WhatsApp</a><a href="tel:+917889693186" class="btn btn-royal btn-sm"><i class="fas fa-phone-alt"></i> Call</a></div></div><div class="tmo" id="tmo"><div class="tmb"><button class="tm-close" id="tmClose"><i class="fas fa-times"></i></button><div class="tmi"><img id="tmoImg" src="" alt=""/></div><div class="tm-body" id="tmBody"></div></div></div>
-<script type="module" src="script.js"></script>
-</body></html>
+<div class="sbb" id="sbb">
+  <div class="sbb-txt"><strong>Plan Your Gurez Trip</strong><span>Free quote in 2 hours</span></div>
+  <div class="sbb-btns">
+    <a href="https://wa.me/917889693186?text=Hi%20TripOrbit!%20I%20want%20to%20enquire%20about%20a%20Kashmir%2FGurez%20trip." target="_blank" class="btn btn-wa btn-sm"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <a href="tel:+917889693186" class="btn btn-royal btn-sm"><i class="fas fa-phone-alt"></i> Call</a>
+  </div>
+</div>
+<div class="tmo" id="tmo">
+  <div class="tmb">
+    <button class="tm-close" id="tmClose" onclick="closeTourModal()"><i class="fas fa-times"></i></button>
+    <div class="tmi"><img id="tmoImg" src="" alt="Tour"/></div>
+    <div class="tm-body" id="tmBody"></div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
