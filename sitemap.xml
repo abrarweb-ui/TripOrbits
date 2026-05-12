@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://trip-orbit.com/</loc>
+    <loc>https://trip-orbit.in/</loc>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://trip-orbit.com/tours.html</loc>
+    <loc>https://trip-orbit.in/tours.html</loc>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://trip-orbit.com/cars.html</loc>
+    <loc>https://trip-orbit.in/cars.html</loc>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://trip-orbit.com/about.html</loc>
+    <loc>https://trip-orbit.in/about.html</loc>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://trip-orbit.com/contact.html</loc>
+    <loc>https://trip-orbit.in/contact.html</loc>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://trip-orbit.com/privacy.html</loc>
+    <loc>https://trip-orbit.in/privacy.html</loc>
     <priority>0.40</priority>
   </url>
 </urlset>
